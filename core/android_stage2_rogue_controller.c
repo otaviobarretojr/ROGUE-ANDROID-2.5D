@@ -210,3 +210,7 @@ const u8 *Rogue_ModifyFieldMessage(const u8 *str)
 {
     return str;
 }
+
+void Rogue_OnSecondPassed(void) {}
+void Rogue_OnMinutePassed(void) {}
+void Rogue_OnHourPassed(void) {}
