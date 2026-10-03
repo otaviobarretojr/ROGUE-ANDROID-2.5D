@@ -45,6 +45,8 @@ make -C "$CORE" -j2 \
   data/maps/headers.inc \
   data/maps/groups.inc \
   data/maps/connections.inc
+make -C "$CORE" -j2 data/maps/Rogue_Hub/scripts.inc
+test -s "$CORE/data/maps/Rogue_Hub/scripts.inc"
 
 echo "== Probe Android/arm64 C compatibility =="
 CLANG="$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android26-clang"
@@ -54,7 +56,7 @@ mkdir -p "$OUT"
 COMMON=(
   -std=gnu17 -O1 -funsigned-char -fno-strict-aliasing -fwrapv -fcommon
   -DPORTABLE=1 -DROGUE_EXPANSION=1 -DROGUE_BAKING=1
-  -I"$CORE/include" -I"$CORE/gflib" -I"$CORE/tools/agbcc/include"
+  -I"$CORE/include" -I"$CORE/gflib" -I"$CORE/tools/agbcc/include" -I"$ROOT/core"
   -Wno-incompatible-pointer-types -Wno-int-conversion
   -Wno-pointer-to-int-cast -Wno-int-to-pointer-cast
   -include alloca.h
@@ -90,7 +92,27 @@ python3 "$ROOT/scripts/generate_arm64_hub_data.py" --core "$CORE" --out "$OUT/hu
 echo "== Generate native-pointer script opcode table =="
 python3 "$ROOT/scripts/generate_arm64_script_table.py" --core "$CORE" --out "$OUT/script_cmd_table_native.c"
 "$CLANG" "${COMMON[@]}" -c "$OUT/script_cmd_table_native.c" -o "$OUT/script_cmd_table_native.o"
-"$CLANG" "${COMMON[@]}" -c "$CORE/src/scrcmd.c" -o "$OUT/scrcmd.o"
+
+echo "== Generate pointer-safe ARM64 script commands =="
+python3 "$ROOT/scripts/generate_arm64_scrcmd.py" --core "$CORE" --out "$OUT/scrcmd_arm64.c"
+"$CLANG" "${COMMON[@]}" -c "$OUT/scrcmd_arm64.c" -o "$OUT/scrcmd.o"
+
+echo "== Build isolated Rogue Hub script bytecode =="
+python3 "$ROOT/scripts/generate_stage2_hub_script_asm.py" --core "$CORE" --out "$OUT/hub_scripts.S"
+(
+  cd "$CORE"
+  "$CLANG" -E -P -x assembler-with-cpp -I include -I gflib "$OUT/hub_scripts.S" \
+    | python3 tools/pc/asmfilter.py - > "$OUT/hub_scripts.filtered.s"
+)
+"$CLANG" -c -x assembler "$OUT/hub_scripts.filtered.s" -o "$OUT/hub_scripts.o"
+python3 "$ROOT/scripts/tokenize_arm64_script_object.py" \
+  --object "$OUT/hub_scripts.o" \
+  --registry-out "$OUT/hub_script_pointer_registry.s" \
+  --manifest-out "$OUT/hub_script_pointer_manifest.txt"
+"$CLANG" -c -x assembler "$OUT/hub_script_pointer_registry.s" -o "$OUT/hub_script_pointer_registry.o"
+
+"$CLANG" "${COMMON[@]}" -c "$ROOT/core/android_script_pointer.c" -o "$OUT/android_script_pointer.o"
+"$CLANG" "${COMMON[@]}" -c "$ROOT/core/android_stage2_std_scripts.c" -o "$OUT/android_stage2_std_scripts.o"
 
 echo "== Map/layout data ABI note =="
 echo "Upstream generated map assembly is intentionally not linked: it uses 32-bit pointer tables (-m32)."
@@ -120,7 +142,9 @@ echo "== Partial relocatable Rogue core link =="
 LD="$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/ld.lld"
 OBJECTS=(
   "$OUT/system.o" "$OUT/main.o" "$OUT/android_flash.o" "$OUT/android_tileset_anims.o" "$OUT/android_syscalls.o" "$OUT/android_player_presentation.o" "$OUT/android_stage2_rogue_controller.o" "$OUT/android_stage2_optional_overworld.o" "$OUT/android_stage2_platform_services.o" "$OUT/android_stage2_weather.o" "$OUT/android_stage2_scanline.o" "$OUT/android_stage2_money.o" "$OUT/android_stage2_textbox.o" "$OUT/android_stage2_field_effects.o" "$OUT/android_stage2_inactive_legacy.o" "$OUT/android_stage2_rogue_save.o" "$OUT/android_stage2_menu_infra.o" "$OUT/android_stage2_special_vars.o"
-  "$OUT/platform_dma.o" "$OUT/platform_rom_assets.o" "$OUT/platform_rom_assets_table.o" "$OUT/hub_native.o" "$OUT/script_cmd_table_native.o" "$OUT/scrcmd.o"
+  "$OUT/platform_dma.o" "$OUT/platform_rom_assets.o" "$OUT/platform_rom_assets_table.o" "$OUT/hub_native.o"
+  "$OUT/script_cmd_table_native.o" "$OUT/scrcmd.o" "$OUT/hub_scripts.o" "$OUT/hub_script_pointer_registry.o"
+  "$OUT/android_script_pointer.o" "$OUT/android_stage2_std_scripts.o"
   "$OUT/random.o" "$OUT/event_data.o" "$OUT/load_save.o" "$OUT/save.o" "$OUT/play_time.o"
   "$OUT/script.o" "$OUT/fieldmap.o" "$OUT/field_control_avatar.o"
   "$OUT/field_player_avatar.o" "$OUT/overworld.o" "$OUT/event_object_movement.o"
