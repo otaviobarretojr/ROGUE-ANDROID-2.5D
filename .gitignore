@@ -14,3 +14,6 @@ build/
 *.HEYPIKACHU
 roms/
 private/
+
+# Fetched upstream development source
+upstream/pokeemerald-rogue/
