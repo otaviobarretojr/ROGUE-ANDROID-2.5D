@@ -100,5 +100,12 @@ echo "$COUNT unresolved symbols (baseline: 575; infra checkpoint: 548)"
 wc -l "$OUT/unresolved-stage1.txt"
 head -n 80 "$OUT/unresolved-stage1.txt"
 
+echo "== Candidate providers for unresolved symbols =="
+python3 "$ROOT/scripts/map_unresolved_providers.py" \
+  "$OUT/unresolved-stage1.txt" "$CORE" \
+  --details "$OUT/unresolved-providers.txt" \
+  --summary "$OUT/provider-summary.txt"
+head -n 120 "$OUT/provider-summary.txt"
+
 echo "ANDROID_CORE_PROBE_OK"
 file "$OUT"/*.o
