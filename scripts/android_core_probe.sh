@@ -38,6 +38,19 @@ test -s "$CORE/include/constants/generated/decorations.h"
   "$CORE/include/constants/generated/custom_mons.h"
 test -s "$CORE/include/constants/generated/custom_mons.h"
 
+OUT_PORYSCRIPT_ZIP="$ROOT/build/poryscript-linux-3.0.2.zip"
+mkdir -p "$ROOT/build"
+echo "== Bootstrap frozen upstream script compiler =="
+PORYSCRIPT="$CORE/tools/poryscript/poryscript-linux/poryscript"
+if [[ ! -x "$PORYSCRIPT" ]]; then
+  mkdir -p "$CORE/tools/poryscript"
+  curl -fsSL -o "$OUT_PORYSCRIPT_ZIP" \
+    https://github.com/huderlem/poryscript/releases/download/3.0.2/poryscript-linux.zip
+  unzip -q -o "$OUT_PORYSCRIPT_ZIP" -d "$CORE/tools/poryscript"
+  chmod +x "$PORYSCRIPT"
+fi
+"$PORYSCRIPT" -v
+
 echo "== Generate map/layout assembly inputs =="
 make -C "$CORE" -j2 \
   data/layouts/layouts.inc \
