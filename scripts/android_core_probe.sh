@@ -65,6 +65,9 @@ COMMON=(
 "$CLANG" "${COMMON[@]}" -c "$CORE/src/platform/system.c" -o "$OUT/system.o"
 "$CLANG" "${COMMON[@]}" -c "$CORE/src/main.c" -o "$OUT/main.o"
 "$CLANG" "${COMMON[@]}" -c "$ROOT/core/android_flash.c" -o "$OUT/android_flash.o"
+echo "== Generate native-pointer Rogue Hub data =="
+python3 "$ROOT/scripts/generate_arm64_hub_data.py" --core "$CORE" --out "$OUT/hub_native.c"
+"$CLANG" "${COMMON[@]}" -c "$OUT/hub_native.c" -o "$OUT/hub_native.o"
 
 echo "== Map/layout data ABI note =="
 echo "Generated map data is validated but not linked yet: upstream portable maps use 32-bit pointer tables (-m32)."
