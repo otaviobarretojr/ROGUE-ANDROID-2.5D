@@ -1,0 +1,6 @@
+cmake_minimum_required(VERSION 3.22.1)
+project(rogue25d_native LANGUAGES C CXX)
+add_library(rogue25d SHARED native_bridge.cpp runtime.cpp)
+target_compile_features(rogue25d PRIVATE cxx_std_20)
+target_compile_options(rogue25d PRIVATE -Wall -Wextra -Werror)
+target_link_libraries(rogue25d android log)
