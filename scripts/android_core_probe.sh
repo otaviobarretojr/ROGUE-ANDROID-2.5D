@@ -68,6 +68,8 @@ COMMON=(
 "$CLANG" "${COMMON[@]}" -c "$ROOT/core/android_tileset_anims.c" -o "$OUT/android_tileset_anims.o"
 "$CLANG" "${COMMON[@]}" -c "$ROOT/core/android_syscalls.c" -o "$OUT/android_syscalls.o"
 "$CLANG" "${COMMON[@]}" -c "$ROOT/core/android_player_presentation.c" -o "$OUT/android_player_presentation.o"
+"$CLANG" "${COMMON[@]}" -DROM_ASSETS=1 -c "$CORE/src/platform/rom_assets.c" -o "$OUT/platform_rom_assets.o"
+"$CLANG" "${COMMON[@]}" -DROM_ASSETS=1 -c "$CORE/src/platform/rom_assets_table.c" -o "$OUT/platform_rom_assets_table.o"
 "$CLANG" "${COMMON[@]}" -c "$CORE/src/platform/dma.c" -o "$OUT/platform_dma.o"
 echo "== Generate native-pointer Rogue Hub data =="
 python3 "$ROOT/scripts/generate_arm64_hub_data.py" --core "$CORE" --out "$OUT/hub_native.c"
@@ -100,7 +102,8 @@ done
 echo "== Partial relocatable Rogue core link =="
 LD="$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/ld.lld"
 OBJECTS=(
-  "$OUT/system.o" "$OUT/main.o" "$OUT/android_flash.o" "$OUT/android_tileset_anims.o" "$OUT/android_syscalls.o" "$OUT/android_player_presentation.o" "$OUT/platform_dma.o" "$OUT/hub_native.o"
+  "$OUT/system.o" "$OUT/main.o" "$OUT/android_flash.o" "$OUT/android_tileset_anims.o" "$OUT/android_syscalls.o" "$OUT/android_player_presentation.o"
+  "$OUT/platform_dma.o" "$OUT/platform_rom_assets.o" "$OUT/platform_rom_assets_table.o" "$OUT/hub_native.o"
   "$OUT/random.o" "$OUT/event_data.o" "$OUT/load_save.o" "$OUT/save.o"
   "$OUT/script.o" "$OUT/fieldmap.o" "$OUT/field_control_avatar.o"
   "$OUT/field_player_avatar.o" "$OUT/overworld.o" "$OUT/event_object_movement.o"
