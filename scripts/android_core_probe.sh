@@ -134,6 +134,11 @@ echo "$COUNT unresolved symbols (baseline: 575; infra checkpoint: 548; Hub-minim
 wc -l "$OUT/unresolved-stage1.txt"
 head -n 80 "$OUT/unresolved-stage1.txt"
 
+echo "== Stage 2 critical unresolved symbols =="
+grep -E '(^| )U (CB2_|FieldCB_|Do(Warp|DoorWarp)|Task_WarpAndLoadMap|WarpIntoMap|SetWarpDestination|RogueHub_|Rogue_|MetatileBehavior_|MapGrid|Player|ObjectEvent|FieldEffect|Init(Field|Standard)|LoadMessage|DrawDialogue|ClearDialog|gMap|gObject|gPlayer|gSaveBlock|gRogue)' \
+  "$OUT/unresolved-stage1.txt" > "$OUT/critical-stage2.txt" || true
+cat "$OUT/critical-stage2.txt"
+
 echo "== Candidate providers for unresolved symbols =="
 python3 "$ROOT/scripts/map_unresolved_providers.py" \
   "$OUT/unresolved-stage1.txt" "$CORE" \
