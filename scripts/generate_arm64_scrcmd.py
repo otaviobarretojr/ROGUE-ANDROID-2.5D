@@ -22,11 +22,58 @@ def main():
 
     src_path=pathlib.Path(args.core)/"src/scrcmd.c"
     text=src_path.read_text()
+    text=text.replace(
+        "extern const u8 *gStdScripts[];\\nextern const u8 *gStdScripts_End[];",
+        "extern const u8 *gStdScripts[];\\nextern const u32 gStdScriptsCount;"
+    )
 
     for old,new in REPLACEMENTS.items():
         if old not in text:
             raise SystemExit(f"expected ARM64 script pointer pattern missing: {old}")
         text=text.replace(old,new)
+
+    def replace_func(name, body):
+        nonlocal_text = None
+        marker=f"bool8 {name}(struct ScriptContext *ctx)"
+        pos=text.find(marker)
+        if pos < 0:
+            raise SystemExit(f"{name} not found")
+        brace=text.find("{",pos)
+        depth=0
+        i=brace
+        while i < len(text):
+            if text[i]=="{": depth+=1
+            elif text[i]=="}":
+                depth-=1
+                if depth==0:
+                    i+=1
+                    break
+            i+=1
+        return text[:pos]+marker+"\\n{\\n"+body+"\\n}"+text[i:]
+
+    for name,body in [
+        ("ScrCmd_gotostd", """    u8 index = ScriptReadByte(ctx);
+    if (index < gStdScriptsCount && gStdScripts[index] != NULL)
+        ScriptJump(ctx, gStdScripts[index]);
+    return FALSE;"""),
+        ("ScrCmd_callstd", """    u8 index = ScriptReadByte(ctx);
+    if (index < gStdScriptsCount && gStdScripts[index] != NULL)
+        ScriptCall(ctx, gStdScripts[index]);
+    return FALSE;"""),
+        ("ScrCmd_gotostd_if", """    u8 condition = ScriptReadByte(ctx);
+    u8 index = ScriptReadByte(ctx);
+    if (sScriptConditionTable[condition][ctx->comparisonResult] == 1
+        && index < gStdScriptsCount && gStdScripts[index] != NULL)
+        ScriptJump(ctx, gStdScripts[index]);
+    return FALSE;"""),
+        ("ScrCmd_callstd_if", """    u8 condition = ScriptReadByte(ctx);
+    u8 index = ScriptReadByte(ctx);
+    if (sScriptConditionTable[condition][ctx->comparisonResult] == 1
+        && index < gStdScriptsCount && gStdScripts[index] != NULL)
+        ScriptCall(ctx, gStdScripts[index]);
+    return FALSE;"""),
+    ]:
+        text=replace_func(name, body)
 
     # Virtual-address opcodes encode absolute 32-bit addresses and cannot be
     # represented safely on an ASLR'd ARM64 process. They are not emitted by
