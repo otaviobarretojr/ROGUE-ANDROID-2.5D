@@ -38,6 +38,14 @@ test -s "$CORE/include/constants/generated/decorations.h"
   "$CORE/include/constants/generated/custom_mons.h"
 test -s "$CORE/include/constants/generated/custom_mons.h"
 
+echo "== Generate map/layout assembly inputs =="
+make -C "$CORE" -j2 \
+  data/layouts/layouts.inc \
+  data/layouts/layouts_table.inc \
+  data/maps/headers.inc \
+  data/maps/groups.inc \
+  data/maps/connections.inc
+
 echo "== Probe Android/arm64 C compatibility =="
 CLANG="$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android26-clang"
 OUT="$ROOT/build/core-probe"
@@ -57,6 +65,14 @@ COMMON=(
 "$CLANG" "${COMMON[@]}" -c "$CORE/src/platform/system.c" -o "$OUT/system.o"
 "$CLANG" "${COMMON[@]}" -c "$CORE/src/main.c" -o "$OUT/main.o"
 "$CLANG" "${COMMON[@]}" -c "$ROOT/core/android_flash.c" -o "$OUT/android_flash.o"
+
+echo "Probing generated map/layout data"
+(
+  cd "$CORE"
+  "$CLANG" -E -P -x assembler-with-cpp -I include data/maps.s \
+    | python3 tools/pc/asmfilter.py - > "$OUT/maps.filtered.s"
+)
+"$CLANG" -c -x assembler "$OUT/maps.filtered.s" -o "$OUT/maps.o"
 
 # Second wave: exercise gameplay state, RNG and save/load translation units.
 # This is compile-only on purpose; unresolved game symbols are expected until
@@ -81,7 +97,7 @@ done
 echo "== Partial relocatable Rogue core link =="
 LD="$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/ld.lld"
 OBJECTS=(
-  "$OUT/system.o" "$OUT/main.o" "$OUT/android_flash.o"
+  "$OUT/system.o" "$OUT/main.o" "$OUT/android_flash.o" "$OUT/maps.o"
   "$OUT/random.o" "$OUT/event_data.o" "$OUT/load_save.o" "$OUT/save.o"
   "$OUT/script.o" "$OUT/fieldmap.o" "$OUT/field_control_avatar.o"
   "$OUT/field_player_avatar.o" "$OUT/overworld.o" "$OUT/event_object_movement.o"
