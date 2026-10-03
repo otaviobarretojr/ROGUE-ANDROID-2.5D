@@ -1,4 +1,5 @@
 #include "global.h"
+#include "constants/characters.h"
 #include "constants/event_objects.h"
 #include "field_player_avatar.h"
 #include "event_object_movement.h"
