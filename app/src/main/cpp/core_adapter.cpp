@@ -1,10 +1,21 @@
 #include "core_adapter.h"
 #include "rogue_bridge.h"
 
+#if defined(ROGUE_CORE_LINKED)
+extern "C" {
+void AgbMain(void);
+void MainLoop(void);
+void RunDMAsAndVBlank(void);
+}
+#endif
+
 namespace rogue25d {
+namespace {
+bool sBooted=false;
+}
 
 CoreCapabilities coreCapabilities() {
-#ifdef ROGUE_CORE_LINKED
+#if defined(ROGUE_CORE_LINKED)
     constexpr bool linked=true;
 #else
     constexpr bool linked=false;
@@ -14,11 +25,20 @@ CoreCapabilities coreCapabilities() {
 
 void coreSetInput(std::uint32_t buttons) {
     bridge().setButtons(buttons);
-    // P2: map this mask to the portable core key state.
 }
 
 void coreStep() {
-    // P2 integration seam. The real Rogue frame will be invoked here.
+#if defined(ROGUE_CORE_LINKED)
+    if(!sBooted) {
+        AgbMain();
+        sBooted=true;
+    }
+    // Portable Rogue frame contract:
+    // MainLoop() -> ReadKeys() -> Platform_GetKeyInput()
+    // then commit DMA/VBlank work exactly once.
+    MainLoop();
+    RunDMAsAndVBlank();
+#endif
 }
 
 }
