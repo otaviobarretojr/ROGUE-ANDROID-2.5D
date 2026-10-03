@@ -1,5 +1,6 @@
 #include "global.h"
 #include "scanline_effect.h"
+#include "task.h"
 #include <string.h>
 
 u16 ALIGNED(4) gScanlineEffectRegBuffers[2][0x3C0] = {0};
