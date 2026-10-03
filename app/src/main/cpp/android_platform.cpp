@@ -5,7 +5,10 @@
 #include <string>
 
 #if defined(ROGUE_CORE_LINKED)
-extern "C" unsigned char FLASH_BASE[131072];
+extern "C" {
+#include "gba/io_reg.h"
+extern unsigned char FLASH_BASE[131072];
+}
 #endif
 
 namespace {
@@ -33,10 +36,26 @@ extern "C" void RogueAndroid_PlatformShutdown(void) {
 
 extern "C" std::uint16_t Platform_GetKeyInput(void) {
     const auto b=rogue25d::bridge().buttons();
-    // Our RogueButton bit layout intentionally matches the GBA logical order
-    // used by the bridge. Explicit mapping to upstream constants is added
-    // when upstream headers are part of the NDK target.
-    return static_cast<std::uint16_t>(b & 0x03FFu);
+#if defined(ROGUE_CORE_LINKED)
+    std::uint16_t gba=0;
+    using rogue25d::RogueButton;
+    const auto has=[b](RogueButton button) {
+        return (b & static_cast<std::uint32_t>(button)) != 0;
+    };
+    if(has(RogueButton::A))      gba |= A_BUTTON;
+    if(has(RogueButton::B))      gba |= B_BUTTON;
+    if(has(RogueButton::Select)) gba |= SELECT_BUTTON;
+    if(has(RogueButton::Start))  gba |= START_BUTTON;
+    if(has(RogueButton::Right))  gba |= DPAD_RIGHT;
+    if(has(RogueButton::Left))   gba |= DPAD_LEFT;
+    if(has(RogueButton::Up))     gba |= DPAD_UP;
+    if(has(RogueButton::Down))   gba |= DPAD_DOWN;
+    if(has(RogueButton::R))      gba |= R_BUTTON;
+    if(has(RogueButton::L))      gba |= L_BUTTON;
+    return gba;
+#else
+    return 0;
+#endif
 }
 
 extern "C" void Platform_StoreSaveFile(void) {
