@@ -88,7 +88,7 @@ echo "ARM64 requires a native-pointer map data adapter before gMapGroups/gMapLay
 # Second wave: exercise gameplay state, RNG and save/load translation units.
 # This is compile-only on purpose; unresolved game symbols are expected until
 # the complete relocatable core target is assembled.
-for src in random.c event_data.c load_save.c save.c \
+for src in random.c event_data.c load_save.c save.c play_time.c \
   script.c fieldmap.c field_control_avatar.c field_player_avatar.c \
   overworld.c event_object_movement.c task.c util.c \
   field_camera.c bike.c decompress.c metatile_behavior.c palette.c field_door.c field_screen_effect.c field_message_box.c trainer_see.c rogue_hub.c; do
@@ -110,7 +110,7 @@ LD="$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/ld.lld"
 OBJECTS=(
   "$OUT/system.o" "$OUT/main.o" "$OUT/android_flash.o" "$OUT/android_tileset_anims.o" "$OUT/android_syscalls.o" "$OUT/android_player_presentation.o" "$OUT/android_stage2_rogue_controller.o" "$OUT/android_stage2_optional_overworld.o" "$OUT/android_stage2_platform_services.o" "$OUT/android_stage2_weather.o" "$OUT/android_stage2_scanline.o" "$OUT/android_stage2_money.o"
   "$OUT/platform_dma.o" "$OUT/platform_rom_assets.o" "$OUT/platform_rom_assets_table.o" "$OUT/hub_native.o"
-  "$OUT/random.o" "$OUT/event_data.o" "$OUT/load_save.o" "$OUT/save.o"
+  "$OUT/random.o" "$OUT/event_data.o" "$OUT/load_save.o" "$OUT/save.o" "$OUT/play_time.o"
   "$OUT/script.o" "$OUT/fieldmap.o" "$OUT/field_control_avatar.o"
   "$OUT/field_player_avatar.o" "$OUT/overworld.o" "$OUT/event_object_movement.o"
   "$OUT/task.o" "$OUT/util.o" "$OUT/field_camera.o" "$OUT/bike.o" "$OUT/decompress.o" "$OUT/metatile_behavior.o" "$OUT/palette.o"
