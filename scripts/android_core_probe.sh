@@ -63,7 +63,7 @@ COMMON=(
 for src in random.c event_data.c load_save.c save.c \
   script.c fieldmap.c field_control_avatar.c field_player_avatar.c \
   overworld.c event_object_movement.c task.c util.c \
-  field_camera.c bike.c decompress.c field_door.c field_screen_effect.c trainer_see.c; do
+  field_camera.c bike.c decompress.c metatile_behavior.c field_door.c field_screen_effect.c trainer_see.c; do
   echo "Probing src/$src"
   EXTRA=()
   if [[ "$src" == "event_object_movement.c" ]]; then
