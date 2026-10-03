@@ -63,7 +63,7 @@ COMMON=(
 for src in random.c event_data.c load_save.c save.c \
   script.c fieldmap.c field_control_avatar.c field_player_avatar.c \
   overworld.c event_object_movement.c task.c util.c \
-  field_camera.c field_weather.c coord_event_weather.c bike.c decompress.c pokemon.c; do
+  field_camera.c bike.c decompress.c; do
   echo "Probing src/$src"
   EXTRA=()
   if [[ "$src" == "event_object_movement.c" ]]; then
@@ -84,8 +84,7 @@ OBJECTS=(
   "$OUT/random.o" "$OUT/event_data.o" "$OUT/load_save.o" "$OUT/save.o"
   "$OUT/script.o" "$OUT/fieldmap.o" "$OUT/field_control_avatar.o"
   "$OUT/field_player_avatar.o" "$OUT/overworld.o" "$OUT/event_object_movement.o"
-  "$OUT/task.o" "$OUT/util.o" "$OUT/field_camera.o" "$OUT/field_weather.o"
-  "$OUT/coord_event_weather.o" "$OUT/bike.o" "$OUT/decompress.o" "$OUT/pokemon.o"
+  "$OUT/task.o" "$OUT/util.o" "$OUT/field_camera.o" "$OUT/bike.o" "$OUT/decompress.o"
   "$OUT/gflib_malloc.o" "$OUT/gflib_sprite.o" "$OUT/gflib_dma3_manager.o"
   "$OUT/gflib_string_util.o" "$OUT/gflib_bg.o" "$OUT/gflib_gpu_regs.o"
 )
@@ -95,7 +94,7 @@ echo "== Stage 1 unresolved symbol inventory =="
 NM="$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-nm"
 "$NM" -u "$OUT/rogue_core_stage1.o" | sort -u > "$OUT/unresolved-stage1.txt"
 COUNT="$(wc -l < "$OUT/unresolved-stage1.txt")"
-echo "$COUNT unresolved symbols (Stage 1 baseline: 575)"
+echo "$COUNT unresolved symbols (baseline: 575; infra checkpoint: 548)"
 wc -l "$OUT/unresolved-stage1.txt"
 head -n 80 "$OUT/unresolved-stage1.txt"
 
