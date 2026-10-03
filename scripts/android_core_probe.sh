@@ -29,7 +29,7 @@ mkdir -p "$OUT"
 
 COMMON=(
   -std=gnu17 -O1 -funsigned-char -fno-strict-aliasing -fwrapv -fcommon
-  -DPORTABLE=1 -DROGUE_EXPANSION=1 -DROGUE_DEBUG=1
+  -DPORTABLE=1 -DROGUE_EXPANSION=1 -DROGUE_DEBUG=1 -DROGUE_BAKING=1
   -I"$CORE/include" -I"$CORE/gflib" -I"$CORE/tools/agbcc/include"
   -Wno-incompatible-pointer-types -Wno-int-conversion
   -Wno-pointer-to-int-cast -Wno-int-to-pointer-cast
