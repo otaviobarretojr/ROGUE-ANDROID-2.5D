@@ -24,8 +24,11 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.9'
+      - name: Install Rogue host build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libpng-dev zlib1g-dev
       - name: Probe Rogue Core on Android ARM64
-        continue-on-error: true
         run: |
           chmod +x scripts/fetch_rogue_core.sh scripts/android_core_probe.sh
           scripts/android_core_probe.sh 2>&1 | tee core-probe.log
