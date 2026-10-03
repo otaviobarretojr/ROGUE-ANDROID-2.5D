@@ -109,3 +109,60 @@ void LZ77UnCompVram(const u32 *src, void *dest)
      */
     Lz77Decompress((const u8 *)src, (u8 *)dest);
 }
+
+
+void RegisterRamReset(u32 resetFlags)
+{
+    (void)resetFlags;
+    /* Host-backed GBA memory starts zeroed; selective hardware RAM reset is
+     * not required for the Stage 2 boot path. */
+}
+
+void SoftReset(u32 resetFlags)
+{
+    (void)resetFlags;
+}
+
+void VBlankIntrWait(void)
+{
+}
+
+void BgAffineSet(struct BgAffineSrcData *src, struct BgAffineDstData *dest, s32 count)
+{
+    if (src == NULL || dest == NULL || count <= 0)
+        return;
+
+    for (s32 i = 0; i < count; ++i)
+    {
+        /*
+         * Stage 2 does not render GBA affine backgrounds. Preserve the common
+         * zero-rotation scale case so engine state stays sane until the 2.5D
+         * renderer owns this transform explicitly.
+         */
+        dest[i].pa = src[i].sx;
+        dest[i].pb = 0;
+        dest[i].pc = 0;
+        dest[i].pd = src[i].sy;
+        dest[i].dx = src[i].texX - ((s32)src[i].scrX * src[i].sx);
+        dest[i].dy = src[i].texY - ((s32)src[i].scrY * src[i].sy);
+    }
+}
+
+void ObjAffineSet(struct ObjAffineSrcData *src, void *dest, s32 count, s32 offset)
+{
+    if (src == NULL || dest == NULL || count <= 0 || offset <= 0)
+        return;
+
+    u8 *write = (u8 *)dest;
+    for (s32 i = 0; i < count; ++i)
+    {
+        s16 x = src[i].xScale == 0 ? 0x100 : (s16)(0x10000 / src[i].xScale);
+        s16 y = src[i].yScale == 0 ? 0x100 : (s16)(0x10000 / src[i].yScale);
+
+        *(s16 *)(write + 0 * offset) = x;
+        *(s16 *)(write + 1 * offset) = 0;
+        *(s16 *)(write + 2 * offset) = 0;
+        *(s16 *)(write + 3 * offset) = y;
+        write += 4 * offset;
+    }
+}
