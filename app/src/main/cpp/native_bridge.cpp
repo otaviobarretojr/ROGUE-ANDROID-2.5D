@@ -1,5 +1,6 @@
 #include <jni.h>
 #include <string>
+#include "core_adapter.h"
 #include "runtime.h"
 #include "rogue_bridge.h"
 
@@ -14,7 +15,7 @@ extern "C" JNIEXPORT void JNICALL Java_com_otaviobarreto_rogue25d_NativeRuntime_
  if(chars) env->ReleaseStringUTFChars(value,chars);
 }
 extern "C" JNIEXPORT void JNICALL Java_com_otaviobarreto_rogue25d_NativeRuntime_nativeSetButtons(JNIEnv*,jobject,jint buttons){
- rogue25d::bridge().setButtons(static_cast<std::uint32_t>(buttons));
+ rogue25d::coreSetInput(static_cast<std::uint32_t>(buttons));
 }
 extern "C" JNIEXPORT jint JNICALL Java_com_otaviobarreto_rogue25d_NativeRuntime_nativeButtons(JNIEnv*,jobject){
  return static_cast<jint>(rogue25d::bridge().buttons());
