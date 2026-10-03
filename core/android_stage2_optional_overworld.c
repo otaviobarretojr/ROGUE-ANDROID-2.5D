@@ -1,5 +1,4 @@
 #include "global.h"
-#include "constants/characters.h"
 #include "constants/event_objects.h"
 #include "field_player_avatar.h"
 #include "event_object_movement.h"
@@ -22,7 +21,8 @@
  * normal "feature inactive" semantics expected by the vanilla overworld.
  */
 
-static const u8 sAndroidStage2EmptyName[] = { EOS };
+/* Gen III text terminator; no character-constant header exists in the frozen upstream. */
+static const u8 sAndroidStage2EmptyName[] = { 0xFF };
 
 bool8 PlayerHasFollower(void) { return FALSE; }
 bool8 FollowerComingThroughDoor(void) { return FALSE; }
