@@ -58,6 +58,21 @@ extern "C" std::uint16_t Platform_GetKeyInput(void) {
 #endif
 }
 
+
+extern "C" void Platform_ReadFlash(std::uint16_t sectorNum, std::uint32_t offset, std::uint8_t* dest, std::uint32_t size) {
+#if defined(ROGUE_CORE_LINKED)
+    if(dest==nullptr || size==0) return;
+    constexpr std::uint32_t kSectorShift=12;
+    constexpr std::uint32_t kFlashSize=131072;
+    std::uint32_t start=(static_cast<std::uint32_t>(sectorNum)<<kSectorShift)+offset;
+    if(start>=kFlashSize) return;
+    if(start+size>kFlashSize) size=kFlashSize-start;
+    std::memcpy(dest,FLASH_BASE+start,size);
+#else
+    (void)sectorNum; (void)offset; (void)dest; (void)size;
+#endif
+}
+
 extern "C" void Platform_StoreSaveFile(void) {
 #if defined(ROGUE_CORE_LINKED)
     if(sSavePath.empty()) return;
