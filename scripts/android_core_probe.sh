@@ -39,7 +39,7 @@ COMMON=(
   -I"$CORE/include" -I"$CORE/gflib" -I"$CORE/tools/agbcc/include"
   -Wno-incompatible-pointer-types -Wno-int-conversion
   -Wno-pointer-to-int-cast -Wno-int-to-pointer-cast
-  -include alloca.h -include stdlib.h
+  -include alloca.h
 )
 
 # Start with the platform-neutral pieces that define the simulated GBA memory
@@ -54,7 +54,11 @@ for src in random.c event_data.c load_save.c save.c \
   script.c fieldmap.c field_control_avatar.c field_player_avatar.c \
   overworld.c event_object_movement.c; do
   echo "Probing src/$src"
-  "$CLANG" "${COMMON[@]}" -c "$CORE/src/$src" -o "$OUT/${src%.c}.o"
+  EXTRA=()
+  if [[ "$src" == "event_object_movement.c" ]]; then
+    EXTRA=(-include stdlib.h)
+  fi
+  "$CLANG" "${COMMON[@]}" "${EXTRA[@]}" -c "$CORE/src/$src" -o "$OUT/${src%.c}.o"
 done
 
 echo "== Partial relocatable Rogue core link =="
