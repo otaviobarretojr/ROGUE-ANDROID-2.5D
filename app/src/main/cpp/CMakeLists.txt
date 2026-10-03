@@ -4,6 +4,7 @@ add_library(rogue25d SHARED
     native_bridge.cpp
     runtime.cpp
     rogue_bridge.cpp
+    core_adapter.cpp
 )
 target_compile_features(rogue25d PRIVATE cxx_std_20)
 target_compile_options(rogue25d PRIVATE -Wall -Wextra -Werror)
