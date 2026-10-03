@@ -3,6 +3,7 @@
 
 #if defined(ROGUE_CORE_LINKED)
 extern "C" {
+#include "platform/system.h"
 void AgbMain(void);
 void MainLoop(void);
 void RunDMAsAndVBlank(void);
@@ -35,9 +36,9 @@ void coreStep() {
         AgbMain();
         sBooted=true;
     }
-    // Portable Rogue frame contract:
-    // MainLoop() -> ReadKeys() -> Platform_GetKeyInput()
-    // then commit DMA/VBlank work exactly once.
+    // Match the portable SDL frame contract exactly: enter VBlank before
+    // advancing game logic, then commit DMA/VBlank work once for this tick.
+    ENTER_VBLANK();
     MainLoop();
     RunDMAsAndVBlank();
 #endif
