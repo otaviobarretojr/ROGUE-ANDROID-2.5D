@@ -1,5 +1,7 @@
 #include "global.h"
 #include "link.h"
+#include "mirage_tower.h"
+#include "battle_pyramid.h"
 #include "save_location.h"
 #include "secret_base.h"
 #include "trainer_hill.h"
@@ -70,3 +72,12 @@ void CreateWirelessStatusIndicatorSprite(u8 x, u8 y)
     (void)x;
     (void)y;
 }
+
+
+void ClearMirageTowerPulseBlendEffect(void) {}
+void ClearMirageTowerPulseBlend(void) {}
+void TryStartMirageTowerPulseBlendEffect(void) {}
+
+u8 InBattlePyramid(void) { return FALSE; }
+bool8 InBattlePyramid_(void) { return FALSE; }
+u8 GetNumBattlePyramidObjectEvents(void) { return 0; }
