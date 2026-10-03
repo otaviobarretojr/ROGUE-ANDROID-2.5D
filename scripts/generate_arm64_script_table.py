@@ -15,35 +15,31 @@ def main():
     if not handlers:
         raise SystemExit("no script handlers found")
 
-    # Last .4byte belongs to gScriptCmdTableEnd sentinel, not opcode table.
+    # The source places one sentinel entry after gScriptCmdTableEnd.
     sentinel=handlers[-1]
     handlers=handlers[:-1]
 
+    if len(handlers) != 0xF7:
+        raise SystemExit(f"unexpected opcode count: {len(handlers)}")
+
     out=[
-        '#include "global.h"',
-        '#include "script.h"',
-        '',
-        '/* Generated from pinned upstream data/script_cmd_table.inc.',
-        ' * Native function pointers are required on Android ARM64. */',
+        '.section .rodata.android_script_cmds,"a",%progbits',
+        '.p2align 3',
+        '.global gScriptCmdTable',
+        '.type gScriptCmdTable,%object',
+        'gScriptCmdTable:',
     ]
-    for name in sorted(set(handlers+[sentinel])):
-        out.append(f'extern bool8 {name}(struct ScriptContext *ctx);')
+    for name in handlers:
+        out.append(f'    .xword {name}')
 
     out += [
-        '',
-        f'ScrCmdFunc gScriptCmdTable[{len(handlers)}] = {{',
-    ]
-    for i,name in enumerate(handlers):
-        out.append(f'    [{i:#04x}] = {name},')
-    out += [
-        '};',
-        '',
-        '/* script.c treats this symbol address as the one-past-end marker. */',
-        f'ScrCmdFunc gScriptCmdTableEnd[1] = {{ {sentinel} }};',
-        '',
-        f'_Static_assert(ARRAY_COUNT(gScriptCmdTable) == {len(handlers)}, "script opcode count mismatch");',
+        '.global gScriptCmdTableEnd',
+        '.type gScriptCmdTableEnd,%object',
+        'gScriptCmdTableEnd:',
+        f'    .xword {sentinel}',
         ''
     ]
+
     pathlib.Path(args.out).write_text("\n".join(out))
 
 if __name__=="__main__":
