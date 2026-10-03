@@ -52,13 +52,18 @@ COMMON=(
 # the complete relocatable core target is assembled.
 for src in random.c event_data.c load_save.c save.c \
   script.c fieldmap.c field_control_avatar.c field_player_avatar.c \
-  overworld.c event_object_movement.c; do
+  overworld.c event_object_movement.c task.c util.c; do
   echo "Probing src/$src"
   EXTRA=()
   if [[ "$src" == "event_object_movement.c" ]]; then
     EXTRA=(-DMODERN=1)
   fi
   "$CLANG" "${COMMON[@]}" "${EXTRA[@]}" -c "$CORE/src/$src" -o "$OUT/${src%.c}.o"
+done
+
+for src in malloc.c sprite.c dma3_manager.c string_util.c; do
+  echo "Probing gflib/$src"
+  "$CLANG" "${COMMON[@]}" -c "$CORE/gflib/$src" -o "$OUT/gflib_${src%.c}.o"
 done
 
 echo "== Partial relocatable Rogue core link =="
@@ -68,12 +73,16 @@ OBJECTS=(
   "$OUT/random.o" "$OUT/event_data.o" "$OUT/load_save.o" "$OUT/save.o"
   "$OUT/script.o" "$OUT/fieldmap.o" "$OUT/field_control_avatar.o"
   "$OUT/field_player_avatar.o" "$OUT/overworld.o" "$OUT/event_object_movement.o"
+  "$OUT/task.o" "$OUT/util.o" "$OUT/gflib_malloc.o" "$OUT/gflib_sprite.o"
+  "$OUT/gflib_dma3_manager.o" "$OUT/gflib_string_util.o"
 )
 "$LD" -r "${OBJECTS[@]}" -o "$OUT/rogue_core_stage1.o"
 
 echo "== Stage 1 unresolved symbol inventory =="
 NM="$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-nm"
 "$NM" -u "$OUT/rogue_core_stage1.o" | sort -u > "$OUT/unresolved-stage1.txt"
+COUNT="$(wc -l < "$OUT/unresolved-stage1.txt")"
+echo "$COUNT unresolved symbols (Stage 1 baseline: 575)"
 wc -l "$OUT/unresolved-stage1.txt"
 head -n 80 "$OUT/unresolved-stage1.txt"
 
