@@ -39,7 +39,7 @@ COMMON=(
   -I"$CORE/include" -I"$CORE/gflib" -I"$CORE/tools/agbcc/include"
   -Wno-incompatible-pointer-types -Wno-int-conversion
   -Wno-pointer-to-int-cast -Wno-int-to-pointer-cast
-  -include alloca.h
+  -include alloca.h -include stdlib.h
 )
 
 # Start with the platform-neutral pieces that define the simulated GBA memory
