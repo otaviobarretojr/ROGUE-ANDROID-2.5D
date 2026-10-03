@@ -98,3 +98,7 @@ void MovePlayerOnRideMon(u8 direction, u16 newKeys, u16 heldKeys)
     (void)heldKeys;
 }
 s16 RideMonGetPlayerSpeed(void) { return 1; }
+
+void FollowMe_SetIndicatorToComeOutDoor(void) {}
+void FollowMe_SetIndicatorToRecreateSurfBlob(void) {}
+void FollowMe_WarpSetEnd(void) {}
