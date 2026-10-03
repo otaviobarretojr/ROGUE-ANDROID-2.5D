@@ -35,8 +35,8 @@ extern "C" void RogueAndroid_PlatformShutdown(void) {
 }
 
 extern "C" std::uint16_t Platform_GetKeyInput(void) {
-    const auto b=rogue25d::bridge().buttons();
 #if defined(ROGUE_CORE_LINKED)
+    const auto b=rogue25d::bridge().buttons();
     std::uint16_t gba=0;
     using rogue25d::RogueButton;
     const auto has=[b](RogueButton button) {
