@@ -32,5 +32,13 @@ COMMON=(
 "$CLANG" "${COMMON[@]}" -c "$CORE/src/platform/system.c" -o "$OUT/system.o"
 "$CLANG" "${COMMON[@]}" -c "$CORE/src/main.c" -o "$OUT/main.o"
 
+# Second wave: exercise gameplay state, RNG and save/load translation units.
+# This is compile-only on purpose; unresolved game symbols are expected until
+# the complete relocatable core target is assembled.
+for src in random.c event_data.c load_save.c save.c; do
+  echo "Probing src/$src"
+  "$CLANG" "${COMMON[@]}" -c "$CORE/src/$src" -o "$OUT/${src%.c}.o"
+done
+
 echo "ANDROID_CORE_PROBE_OK"
-file "$OUT/system.o" "$OUT/main.o"
+file "$OUT"/*.o
