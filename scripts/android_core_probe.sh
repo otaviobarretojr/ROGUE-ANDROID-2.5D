@@ -71,6 +71,7 @@ COMMON=(
 "$CLANG" "${COMMON[@]}" -c "$ROOT/core/android_stage2_rogue_controller.c" -o "$OUT/android_stage2_rogue_controller.o"
 "$CLANG" "${COMMON[@]}" -c "$ROOT/core/android_stage2_optional_overworld.c" -o "$OUT/android_stage2_optional_overworld.o"
 "$CLANG" "${COMMON[@]}" -c "$ROOT/core/android_stage2_platform_services.c" -o "$OUT/android_stage2_platform_services.o"
+"$CLANG" "${COMMON[@]}" -c "$ROOT/core/android_stage2_weather.c" -o "$OUT/android_stage2_weather.o"
 "$CLANG" "${COMMON[@]}" -DROM_ASSETS=1 -c "$CORE/src/platform/rom_assets.c" -o "$OUT/platform_rom_assets.o"
 "$CLANG" "${COMMON[@]}" -DROM_ASSETS=1 -c "$CORE/src/platform/rom_assets_table.c" -o "$OUT/platform_rom_assets_table.o"
 "$CLANG" "${COMMON[@]}" -c "$CORE/src/platform/dma.c" -o "$OUT/platform_dma.o"
@@ -105,7 +106,7 @@ done
 echo "== Partial relocatable Rogue core link =="
 LD="$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/ld.lld"
 OBJECTS=(
-  "$OUT/system.o" "$OUT/main.o" "$OUT/android_flash.o" "$OUT/android_tileset_anims.o" "$OUT/android_syscalls.o" "$OUT/android_player_presentation.o" "$OUT/android_stage2_rogue_controller.o" "$OUT/android_stage2_optional_overworld.o" "$OUT/android_stage2_platform_services.o"
+  "$OUT/system.o" "$OUT/main.o" "$OUT/android_flash.o" "$OUT/android_tileset_anims.o" "$OUT/android_syscalls.o" "$OUT/android_player_presentation.o" "$OUT/android_stage2_rogue_controller.o" "$OUT/android_stage2_optional_overworld.o" "$OUT/android_stage2_platform_services.o" "$OUT/android_stage2_weather.o"
   "$OUT/platform_dma.o" "$OUT/platform_rom_assets.o" "$OUT/platform_rom_assets_table.o" "$OUT/hub_native.o"
   "$OUT/random.o" "$OUT/event_data.o" "$OUT/load_save.o" "$OUT/save.o"
   "$OUT/script.o" "$OUT/fieldmap.o" "$OUT/field_control_avatar.o"
