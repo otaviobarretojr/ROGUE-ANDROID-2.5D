@@ -1,5 +1,6 @@
 #include "global.h"
 #include "rogue_save.h"
+#include "pokemon_storage_system.h"
 
 struct RogueSaveBlock *gRogueSaveBlock = NULL;
 
