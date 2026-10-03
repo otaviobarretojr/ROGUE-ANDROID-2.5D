@@ -10,9 +10,11 @@ void RunDMAsAndVBlank(void);
 #endif
 
 namespace rogue25d {
+#if defined(ROGUE_CORE_LINKED)
 namespace {
 bool sBooted=false;
 }
+#endif
 
 CoreCapabilities coreCapabilities() {
 #if defined(ROGUE_CORE_LINKED)
