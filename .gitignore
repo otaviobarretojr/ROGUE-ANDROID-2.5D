@@ -1,0 +1,16 @@
+*.iml
+.gradle/
+.idea/
+local.properties
+build/
+**/build/
+.cxx/
+.externalNativeBuild/
+*.jks
+*.keystore
+*.sav
+*.gba
+*.rom
+*.HEYPIKACHU
+roms/
+private/
