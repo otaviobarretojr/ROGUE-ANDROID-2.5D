@@ -20,7 +20,13 @@ mkdir -p "$CORE/include/generated"
   quest_consts_h \
   "$CORE/src/data/rogue/quests.json" \
   "$CORE/include/generated/quest_consts.h"
+mkdir -p "$CORE/include/constants/generated"
+"$CORE/tools/Pokabbie/Build/CustomJson/customjson" \
+  quests_h \
+  "$CORE/src/data/rogue/quests.json" \
+  "$CORE/include/constants/generated/quests.h"
 test -s "$CORE/include/generated/quest_consts.h"
+test -s "$CORE/include/constants/generated/quests.h"
 
 echo "== Probe Android/arm64 C compatibility =="
 CLANG="$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android26-clang"
