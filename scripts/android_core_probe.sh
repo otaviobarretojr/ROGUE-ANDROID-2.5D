@@ -56,6 +56,7 @@ COMMON=(
 # and the real game frame entry point. More files are added as blockers fall.
 "$CLANG" "${COMMON[@]}" -c "$CORE/src/platform/system.c" -o "$OUT/system.o"
 "$CLANG" "${COMMON[@]}" -c "$CORE/src/main.c" -o "$OUT/main.o"
+"$CLANG" "${COMMON[@]}" -c "$ROOT/core/android_flash.c" -o "$OUT/android_flash.o"
 
 # Second wave: exercise gameplay state, RNG and save/load translation units.
 # This is compile-only on purpose; unresolved game symbols are expected until
@@ -80,7 +81,7 @@ done
 echo "== Partial relocatable Rogue core link =="
 LD="$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/ld.lld"
 OBJECTS=(
-  "$OUT/system.o" "$OUT/main.o"
+  "$OUT/system.o" "$OUT/main.o" "$OUT/android_flash.o"
   "$OUT/random.o" "$OUT/event_data.o" "$OUT/load_save.o" "$OUT/save.o"
   "$OUT/script.o" "$OUT/fieldmap.o" "$OUT/field_control_avatar.o"
   "$OUT/field_player_avatar.o" "$OUT/overworld.o" "$OUT/event_object_movement.o"
