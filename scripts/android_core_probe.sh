@@ -63,7 +63,7 @@ COMMON=(
 for src in random.c event_data.c load_save.c save.c \
   script.c fieldmap.c field_control_avatar.c field_player_avatar.c \
   overworld.c event_object_movement.c task.c util.c \
-  field_camera.c bike.c decompress.c metatile_behavior.c palette.c field_door.c field_screen_effect.c trainer_see.c; do
+  field_camera.c bike.c decompress.c metatile_behavior.c palette.c field_door.c field_screen_effect.c field_message_box.c trainer_see.c; do
   echo "Probing src/$src"
   EXTRA=()
   if [[ "$src" == "event_object_movement.c" ]]; then
@@ -85,7 +85,7 @@ OBJECTS=(
   "$OUT/script.o" "$OUT/fieldmap.o" "$OUT/field_control_avatar.o"
   "$OUT/field_player_avatar.o" "$OUT/overworld.o" "$OUT/event_object_movement.o"
   "$OUT/task.o" "$OUT/util.o" "$OUT/field_camera.o" "$OUT/bike.o" "$OUT/decompress.o" "$OUT/metatile_behavior.o" "$OUT/palette.o"
-  "$OUT/field_door.o" "$OUT/field_screen_effect.o" "$OUT/trainer_see.o"
+  "$OUT/field_door.o" "$OUT/field_screen_effect.o" "$OUT/field_message_box.o" "$OUT/trainer_see.o"
   "$OUT/gflib_malloc.o" "$OUT/gflib_sprite.o" "$OUT/gflib_dma3_manager.o"
   "$OUT/gflib_string_util.o" "$OUT/gflib_bg.o" "$OUT/gflib_gpu_regs.o" "$OUT/gflib_blit.o"
   "$OUT/gflib_text.o" "$OUT/gflib_window.o"
