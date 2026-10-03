@@ -7,18 +7,18 @@
 
 s32 gFieldEffectArguments[8] = {0};
 
-static bool8 sActive[FLDEFF_COUNT];
+enum { ANDROID_STAGE2_FIELD_EFFECT_COUNT = FLDEFF_DOUBLE_EXCL_MARK_ICON + 1 };\nstatic bool8 sActive[ANDROID_STAGE2_FIELD_EFFECT_COUNT];
 
 u32 FieldEffectStart(u8 id)
 {
-    if (id < FLDEFF_COUNT)
+    if (id < ANDROID_STAGE2_FIELD_EFFECT_COUNT)
         sActive[id] = TRUE;
     return 0;
 }
 
 bool8 FieldEffectActiveListContains(u8 id)
 {
-    return id < FLDEFF_COUNT ? sActive[id] : FALSE;
+    return id < ANDROID_STAGE2_FIELD_EFFECT_COUNT ? sActive[id] : FALSE;
 }
 
 void FieldEffectActiveListClear(void)
@@ -28,13 +28,13 @@ void FieldEffectActiveListClear(void)
 
 void FieldEffectActiveListAdd(u8 id)
 {
-    if (id < FLDEFF_COUNT)
+    if (id < ANDROID_STAGE2_FIELD_EFFECT_COUNT)
         sActive[id] = TRUE;
 }
 
 void FieldEffectActiveListRemove(u8 id)
 {
-    if (id < FLDEFF_COUNT)
+    if (id < ANDROID_STAGE2_FIELD_EFFECT_COUNT)
         sActive[id] = FALSE;
 }
 
