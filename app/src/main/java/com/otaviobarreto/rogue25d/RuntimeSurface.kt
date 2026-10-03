@@ -16,8 +16,20 @@ class RuntimeSurface(context: Context): View(context), Choreographer.FrameCallba
   setBackgroundColor(Color.rgb(18,34,28))
   runtime.nativeSetStoragePath(context.filesDir.absolutePath)
  }
- override fun onAttachedToWindow(){ super.onAttachedToWindow(); runtime.nativeStart(); Choreographer.getInstance().postFrameCallback(this) }
- override fun onDetachedFromWindow(){ Choreographer.getInstance().removeFrameCallback(this); runtime.nativeStop(); super.onDetachedFromWindow() }
+ override fun onAttachedToWindow(){
+  super.onAttachedToWindow()
+  lastFrameNanos=0L
+  runtime.nativeStart()
+  Choreographer.getInstance().postFrameCallback(this)
+ }
+ override fun onDetachedFromWindow(){
+  Choreographer.getInstance().removeFrameCallback(this)
+  lastFrameNanos=0L
+  buttons=0
+  runtime.nativeSetButtons(0)
+  runtime.nativeStop()
+  super.onDetachedFromWindow()
+ }
  override fun doFrame(t:Long){
   if(lastFrameNanos!=0L) runtime.nativeStep((t-lastFrameNanos)/1_000_000_000.0)
   lastFrameNanos=t; invalidate(); Choreographer.getInstance().postFrameCallback(this)
