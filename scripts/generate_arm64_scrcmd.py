@@ -8,7 +8,6 @@ REPLACEMENTS = {
     "(const u8 *)ScriptReadWord(ctx)": "(const u8 *)AndroidScriptReadPointer(ctx)",
     "(const u8*) ScriptReadWord(ctx)": "(const u8*) AndroidScriptReadPointer(ctx)",
     "(u8 *)ScriptReadWord(ctx)": "(u8 *)AndroidScriptReadPointer(ctx)",
-    "(u8*) ScriptReadWord(ctx)": "(u8*) AndroidScriptReadPointer(ctx)",
     "(void *)ScriptReadWord(ctx)": "(void *)AndroidScriptReadPointer(ctx)",
     "(const void *)ScriptReadWord(ctx)": "(const void *)AndroidScriptReadPointer(ctx)",
     "(const u8 *)ctx->data[0]": "(const u8 *)AndroidScriptResolvePointer(ctx->data[0])",
