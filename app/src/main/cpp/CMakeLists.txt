@@ -5,6 +5,7 @@ add_library(rogue25d SHARED
     runtime.cpp
     rogue_bridge.cpp
     core_adapter.cpp
+    android_platform.cpp
 )
 target_compile_features(rogue25d PRIVATE cxx_std_20)
 target_compile_options(rogue25d PRIVATE -Wall -Wextra -Werror)
