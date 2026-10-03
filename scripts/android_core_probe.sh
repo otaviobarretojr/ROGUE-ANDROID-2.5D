@@ -75,6 +75,7 @@ COMMON=(
 "$CLANG" "${COMMON[@]}" -c "$ROOT/core/android_stage2_scanline.c" -o "$OUT/android_stage2_scanline.o"
 "$CLANG" "${COMMON[@]}" -c "$ROOT/core/android_stage2_money.c" -o "$OUT/android_stage2_money.o"
 "$CLANG" "${COMMON[@]}" -c "$ROOT/core/android_stage2_textbox.c" -o "$OUT/android_stage2_textbox.o"
+"$CLANG" "${COMMON[@]}" -c "$ROOT/core/android_stage2_field_effects.c" -o "$OUT/android_stage2_field_effects.o"
 "$CLANG" "${COMMON[@]}" -DROM_ASSETS=1 -c "$CORE/src/platform/rom_assets.c" -o "$OUT/platform_rom_assets.o"
 "$CLANG" "${COMMON[@]}" -DROM_ASSETS=1 -c "$CORE/src/platform/rom_assets_table.c" -o "$OUT/platform_rom_assets_table.o"
 echo "ROM_ASSETS loader/table ABI compiled; asset markers are produced by the final ROM_ASSETS preprocessing/link pipeline."
@@ -110,7 +111,7 @@ done
 echo "== Partial relocatable Rogue core link =="
 LD="$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/ld.lld"
 OBJECTS=(
-  "$OUT/system.o" "$OUT/main.o" "$OUT/android_flash.o" "$OUT/android_tileset_anims.o" "$OUT/android_syscalls.o" "$OUT/android_player_presentation.o" "$OUT/android_stage2_rogue_controller.o" "$OUT/android_stage2_optional_overworld.o" "$OUT/android_stage2_platform_services.o" "$OUT/android_stage2_weather.o" "$OUT/android_stage2_scanline.o" "$OUT/android_stage2_money.o" "$OUT/android_stage2_textbox.o"
+  "$OUT/system.o" "$OUT/main.o" "$OUT/android_flash.o" "$OUT/android_tileset_anims.o" "$OUT/android_syscalls.o" "$OUT/android_player_presentation.o" "$OUT/android_stage2_rogue_controller.o" "$OUT/android_stage2_optional_overworld.o" "$OUT/android_stage2_platform_services.o" "$OUT/android_stage2_weather.o" "$OUT/android_stage2_scanline.o" "$OUT/android_stage2_money.o" "$OUT/android_stage2_textbox.o" "$OUT/android_stage2_field_effects.o"
   "$OUT/platform_dma.o" "$OUT/platform_rom_assets.o" "$OUT/platform_rom_assets_table.o" "$OUT/hub_native.o"
   "$OUT/random.o" "$OUT/event_data.o" "$OUT/load_save.o" "$OUT/save.o" "$OUT/play_time.o"
   "$OUT/script.o" "$OUT/fieldmap.o" "$OUT/field_control_avatar.o"
