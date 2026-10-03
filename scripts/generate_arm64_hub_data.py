@@ -142,13 +142,14 @@ def main():
         out.append("static const struct WarpEvent sRogueHubWarps[] = {")
         for w in warps:
             dest=w["dest_map"]
+            map_token=dest[4:] if dest.startswith("MAP_") else dest
             out += [
                 "    {",
                 f"        .x = {ctoken(w['x'])}, .y = {ctoken(w['y'])},",
                 f"        .elevation = {ctoken(w['elevation'])},",
                 f"        .warpId = {ctoken(w['dest_warp_id'])},",
-                f"        .mapNum = MAP_NUM({dest}),",
-                f"        .mapGroup = MAP_GROUP({dest}),",
+                f"        .mapNum = MAP_NUM({map_token}),",
+                f"        .mapGroup = MAP_GROUP({map_token}),",
                 "    },"
             ]
         out += ["};",""]
