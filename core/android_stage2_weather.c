@@ -99,3 +99,8 @@ void PreservePaletteInWeather(u8 preservedPalIndex)
 }
 
 void ResetPreservedPalettesInWeather(void) {}
+
+
+void PlayRainStoppingSoundEffect(void)
+{
+}
