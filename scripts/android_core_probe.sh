@@ -14,6 +14,14 @@ git -C "$CORE" rev-parse HEAD
 echo "== Generate host-side build tools =="
 make -C "$CORE" -f make_tools.mk -j2
 
+echo "== Generate Rogue compile-time headers =="
+mkdir -p "$CORE/include/generated"
+"$CORE/tools/Pokabbie/Build/CustomJson/customjson" \
+  quest_consts_h \
+  "$CORE/src/data/rogue/quests.json" \
+  "$CORE/include/generated/quest_consts.h"
+test -s "$CORE/include/generated/quest_consts.h"
+
 echo "== Probe Android/arm64 C compatibility =="
 CLANG="$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android26-clang"
 OUT="$ROOT/build/core-probe"
