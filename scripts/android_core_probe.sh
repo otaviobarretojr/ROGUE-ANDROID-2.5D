@@ -77,14 +77,15 @@ COMMON=(
 "$CLANG" "${COMMON[@]}" -c "$ROOT/core/android_stage2_textbox.c" -o "$OUT/android_stage2_textbox.o"
 "$CLANG" "${COMMON[@]}" -DROM_ASSETS=1 -c "$CORE/src/platform/rom_assets.c" -o "$OUT/platform_rom_assets.o"
 "$CLANG" "${COMMON[@]}" -DROM_ASSETS=1 -c "$CORE/src/platform/rom_assets_table.c" -o "$OUT/platform_rom_assets_table.o"
+echo "ROM_ASSETS loader/table ABI compiled; asset markers are produced by the final ROM_ASSETS preprocessing/link pipeline."
 "$CLANG" "${COMMON[@]}" -c "$CORE/src/platform/dma.c" -o "$OUT/platform_dma.o"
 echo "== Generate native-pointer Rogue Hub data =="
 python3 "$ROOT/scripts/generate_arm64_hub_data.py" --core "$CORE" --out "$OUT/hub_native.c"
 "$CLANG" "${COMMON[@]}" -c "$OUT/hub_native.c" -o "$OUT/hub_native.o"
 
 echo "== Map/layout data ABI note =="
-echo "Generated map data is validated but not linked yet: upstream portable maps use 32-bit pointer tables (-m32)."
-echo "ARM64 requires a native-pointer map data adapter before gMapGroups/gMapLayouts can be linked safely."
+echo "Upstream generated map assembly is intentionally not linked: it uses 32-bit pointer tables (-m32)."
+echo "The Stage 2 Rogue Hub is linked through hub_native.o with native ARM64 pointers."
 
 # Second wave: exercise gameplay state, RNG and save/load translation units.
 # This is compile-only on purpose; unresolved game symbols are expected until
