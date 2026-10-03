@@ -35,7 +35,9 @@ COMMON=(
 # Second wave: exercise gameplay state, RNG and save/load translation units.
 # This is compile-only on purpose; unresolved game symbols are expected until
 # the complete relocatable core target is assembled.
-for src in random.c event_data.c load_save.c save.c; do
+for src in random.c event_data.c load_save.c save.c \
+  script.c fieldmap.c field_control_avatar.c field_player_avatar.c \
+  overworld.c event_object_movement.c; do
   echo "Probing src/$src"
   "$CLANG" "${COMMON[@]}" -c "$CORE/src/$src" -o "$OUT/${src%.c}.o"
 done
