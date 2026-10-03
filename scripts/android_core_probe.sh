@@ -96,7 +96,7 @@ done
 echo "== Partial relocatable Rogue core link =="
 LD="$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/ld.lld"
 OBJECTS=(
-  "$OUT/system.o" "$OUT/main.o" "$OUT/android_flash.o"
+  "$OUT/system.o" "$OUT/main.o" "$OUT/android_flash.o" "$OUT/hub_native.o"
   "$OUT/random.o" "$OUT/event_data.o" "$OUT/load_save.o" "$OUT/save.o"
   "$OUT/script.o" "$OUT/fieldmap.o" "$OUT/field_control_avatar.o"
   "$OUT/field_player_avatar.o" "$OUT/overworld.o" "$OUT/event_object_movement.o"
