@@ -5,4 +5,7 @@ class NativeRuntime {
  external fun nativeStop()
  external fun nativeStep(dt: Double)
  external fun nativeTick(): Long
+ external fun nativeSetStoragePath(path: String)
+ external fun nativeSetButtons(buttons: Int)
+ external fun nativeButtons(): Int
 }
