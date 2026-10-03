@@ -53,7 +53,7 @@ mkdir -p "$OUT"
 
 COMMON=(
   -std=gnu17 -O1 -funsigned-char -fno-strict-aliasing -fwrapv -fcommon
-  -DPORTABLE=1 -DROGUE_EXPANSION=1 -DROGUE_DEBUG=1 -DROGUE_BAKING=1
+  -DPORTABLE=1 -DROGUE_EXPANSION=1 -DROGUE_BAKING=1
   -I"$CORE/include" -I"$CORE/gflib" -I"$CORE/tools/agbcc/include"
   -Wno-incompatible-pointer-types -Wno-int-conversion
   -Wno-pointer-to-int-cast -Wno-int-to-pointer-cast
@@ -116,7 +116,7 @@ echo "== Stage 1 unresolved symbol inventory =="
 NM="$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-nm"
 "$NM" -u "$OUT/rogue_core_stage1.o" | sort -u > "$OUT/unresolved-stage1.txt"
 COUNT="$(wc -l < "$OUT/unresolved-stage1.txt")"
-echo "$COUNT unresolved symbols (baseline: 575; infra checkpoint: 548)"
+echo "$COUNT unresolved symbols (baseline: 575; infra checkpoint: 548; Hub-minimal excludes ROGUE_DEBUG)"
 wc -l "$OUT/unresolved-stage1.txt"
 head -n 80 "$OUT/unresolved-stage1.txt"
 
