@@ -135,13 +135,8 @@ u32 ProgramFlashSectorAndVerify(u16 sectorNum, u8 *src)
 
 u32 ProgramFlashSectorAndVerifyNBytes(u16 sectorNum, u8 *src, u32 n)
 {
-    u32 start;
-    if (sectorNum >= sAndroidFlashType.sector.count || src == NULL)
-        return 1;
-
-    if (n > sAndroidFlashType.sector.size)
-        n = sAndroidFlashType.sector.size;
-    start = (u32)sectorNum << sAndroidFlashType.sector.shift;
-    memcpy(&FLASH_BASE[start], src, n);
+    u16 result = AndroidProgramFlashSector(sectorNum, src);
+    if (result != 0)
+        return result;
     return VerifyFlashSectorNBytes(sectorNum, src, n);
 }
