@@ -56,7 +56,7 @@ for src in random.c event_data.c load_save.c save.c \
   echo "Probing src/$src"
   EXTRA=()
   if [[ "$src" == "event_object_movement.c" ]]; then
-    EXTRA=(-include stdlib.h)
+    EXTRA=(-DMODERN=1)
   fi
   "$CLANG" "${COMMON[@]}" "${EXTRA[@]}" -c "$CORE/src/$src" -o "$OUT/${src%.c}.o"
 done
