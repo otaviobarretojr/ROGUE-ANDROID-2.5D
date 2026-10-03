@@ -51,7 +51,6 @@ u16 gSendCmd[CMD_LENGTH] = {0};
 struct LinkPlayer gLinkPlayers[MAX_RFU_PLAYERS] = {0};
 bool8 gReceivedRemoteLinkPlayers = FALSE;
 u16 gLinkPartnersHeldKeys[6] = {0};
-bool8 gLinkVSyncDisabled = FALSE;
 
 void CloseLink(void) {}
 bool8 IsLinkTaskFinished(void) { return TRUE; }
