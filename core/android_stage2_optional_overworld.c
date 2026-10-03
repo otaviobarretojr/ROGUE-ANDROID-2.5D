@@ -1,6 +1,13 @@
 #include "global.h"
 #include "constants/event_objects.h"
 #include "field_player_avatar.h"
+#include "event_object_movement.h"
+#include "field_door.h"
+#include "field_screen_effect.h"
+#include "field_weather.h"
+#include "overworld.h"
+#include "sound.h"
+#include "task.h"
 #include "follow_me.h"
 #include "rogue_followmon.h"
 #include "rogue_multiplayer.h"
@@ -102,3 +109,62 @@ s16 RideMonGetPlayerSpeed(void) { return 1; }
 void FollowMe_SetIndicatorToComeOutDoor(void) {}
 void FollowMe_SetIndicatorToRecreateSurfBlob(void) {}
 void FollowMe_WarpSetEnd(void) {}
+
+
+void HideFollower(void)
+{
+}
+
+void Task_DoDoorWarp(u8 taskId)
+{
+    struct Task *task = &gTasks[taskId];
+    s16 *x = &task->data[2];
+    s16 *y = &task->data[3];
+    u8 playerObjId = gPlayerAvatar.objectEventId;
+
+    switch (task->data[0])
+    {
+    case 0:
+        if (TestPlayerAvatarFlags(PLAYER_AVATAR_FLAG_DASH))
+            SetPlayerAvatarTransitionFlags(PLAYER_AVATAR_FLAG_ON_FOOT);
+
+        FreezeObjectEvents();
+        PlayerGetDestCoords(x, y);
+        PlaySE(GetDoorSoundEffect(*x, *y - 1));
+        task->data[1] = FieldAnimateDoorOpen(*x, *y - 1);
+        task->data[0] = 1;
+        break;
+
+    case 1:
+        if (task->data[1] < 0 || !gTasks[task->data[1]].isActive)
+        {
+            ObjectEventClearHeldMovementIfActive(&gObjectEvents[playerObjId]);
+            ObjectEventSetHeldMovement(&gObjectEvents[playerObjId], MOVEMENT_ACTION_WALK_NORMAL_UP);
+            task->data[0] = 2;
+        }
+        break;
+
+    case 2:
+        if (IsPlayerStandingStill())
+        {
+            task->data[1] = FieldAnimateDoorClose(*x, *y - 1);
+            ObjectEventClearHeldMovementIfFinished(&gObjectEvents[playerObjId]);
+            SetPlayerVisibility(FALSE);
+            task->data[0] = 3;
+        }
+        break;
+
+    case 3:
+        if (task->data[1] < 0 || !gTasks[task->data[1]].isActive)
+            task->data[0] = 4;
+        break;
+
+    case 4:
+        TryFadeOutOldMapMusic();
+        WarpFadeOutScreen();
+        PlayRainStoppingSoundEffect();
+        task->data[0] = 0;
+        task->func = Task_WarpAndLoadMap;
+        break;
+    }
+}
