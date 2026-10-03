@@ -168,3 +168,10 @@ void Task_DoDoorWarp(u8 taskId)
         break;
     }
 }
+
+
+const struct ObjectEventGraphicsInfo *GetFollowMonObjectEventInfo(u16 graphicsId)
+{
+    (void)graphicsId;
+    return NULL;
+}
