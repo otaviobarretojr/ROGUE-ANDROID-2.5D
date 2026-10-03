@@ -19,6 +19,18 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.9'
+      - name: Probe Rogue Core on Android ARM64
+        continue-on-error: true
+        run: |
+          chmod +x scripts/fetch_rogue_core.sh scripts/android_core_probe.sh
+          scripts/android_core_probe.sh 2>&1 | tee core-probe.log
+      - name: Upload core probe log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: rogue-core-arm64-probe
+          path: core-probe.log
+          if-no-files-found: warn
       - name: Build ARM64 debug APK
         run: gradle --no-daemon :app:assembleDebug
       - name: Verify APK and native runtime
