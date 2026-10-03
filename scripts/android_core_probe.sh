@@ -42,5 +42,21 @@ for src in random.c event_data.c load_save.c save.c \
   "$CLANG" "${COMMON[@]}" -c "$CORE/src/$src" -o "$OUT/${src%.c}.o"
 done
 
+echo "== Partial relocatable Rogue core link =="
+LD="$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/ld.lld"
+OBJECTS=(
+  "$OUT/system.o" "$OUT/main.o"
+  "$OUT/random.o" "$OUT/event_data.o" "$OUT/load_save.o" "$OUT/save.o"
+  "$OUT/script.o" "$OUT/fieldmap.o" "$OUT/field_control_avatar.o"
+  "$OUT/field_player_avatar.o" "$OUT/overworld.o" "$OUT/event_object_movement.o"
+)
+"$LD" -r "${OBJECTS[@]}" -o "$OUT/rogue_core_stage1.o"
+
+echo "== Stage 1 unresolved symbol inventory =="
+NM="$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-nm"
+"$NM" -u "$OUT/rogue_core_stage1.o" | sort -u > "$OUT/unresolved-stage1.txt"
+wc -l "$OUT/unresolved-stage1.txt"
+head -n 80 "$OUT/unresolved-stage1.txt"
+
 echo "ANDROID_CORE_PROBE_OK"
 file "$OUT"/*.o
