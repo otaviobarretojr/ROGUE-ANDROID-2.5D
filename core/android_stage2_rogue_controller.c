@@ -2,6 +2,7 @@
 #include "constants/event_objects.h"
 #include "constants/flags.h"
 #include "constants/vars.h"
+#include "constants/weather.h"
 #include "event_data.h"
 #include "rogue_controller.h"
 #include "rogue_hub.h"
@@ -29,6 +30,12 @@ u8 Rogue_GetOverworldSpeedScale(void)
 u16 Rogue_ModifyPlayBGM(u16 songNum)
 {
     return songNum;
+}
+
+u16 Rogue_ModifyOverworldMapWeather(u16 weather)
+{
+    (void)weather;
+    return WEATHER_NONE;
 }
 
 bool8 Rogue_ModifyPaletteDecompress(const u32 *input, void *writeBuffer)
@@ -197,4 +204,9 @@ void Rogue_ModifyObjectEvents(
             objectEventCount,
             objectEventCapacity);
     }
+}
+
+const u8 *Rogue_ModifyFieldMessage(const u8 *str)
+{
+    return str;
 }
