@@ -4,6 +4,12 @@
 #include <cstring>
 #include <string>
 
+#if defined(ROGUE_CORE_LINKED) && defined(ROM_ASSETS)
+extern "C" {
+#include "platform/rom_assets.h"
+}
+#endif
+
 #if defined(ROGUE_CORE_LINKED)
 extern "C" {
 #include "gba/io_reg.h"
@@ -17,7 +23,15 @@ std::string sSavePath;
 
 extern "C" bool RogueAndroid_PlatformInit(const char* storagePath) {
     if(storagePath==nullptr || *storagePath=='\0') return false;
-    sSavePath=std::string(storagePath)+"/pokeemerald.sav";
+    std::string dataDir(storagePath);
+    if(dataDir.back()!='/') dataDir.push_back('/');
+    sSavePath=dataDir+"pokeemerald.sav";
+#if defined(ROGUE_CORE_LINKED) && defined(ROM_ASSETS)
+    char romError[128] = {};
+    if(!RomAssets_Load(dataDir.c_str(), romError, sizeof(romError))) {
+        return false;
+    }
+#endif
 #if defined(ROGUE_CORE_LINKED)
     std::memset(FLASH_BASE,0xFF,131072);
     if(FILE* f=std::fopen(sSavePath.c_str(),"rb")) {
