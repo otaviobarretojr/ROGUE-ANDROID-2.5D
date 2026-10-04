@@ -7,6 +7,8 @@ CONTROL = {"l": [0xFA], "p": [0xFB], "n": [0xFE], "v": [0xFD]}
 STRING = re.compile(r'^(\s*)\.string\s+"(.*)"\s*$')
 
 def convert(line):
+    # Clang IAS accepts a single colon; the GBA sources commonly export labels with ::.
+    line = re.sub(r"^([A-Za-z_][A-Za-z0-9_.$]*)::", r"\\1:", line)
     m = STRING.match(line)
     if not m:
         return [line]
