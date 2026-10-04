@@ -92,14 +92,14 @@ def main():
 bool8 ScrCmd_vgoto(struct ScriptContext *ctx)
 {
     (void)ScriptReadWord(ctx);
-    ctx->mode = SCRIPT_MODE_STOPPED;
+    StopScript(ctx);
     return TRUE;
 }
 
 bool8 ScrCmd_vcall(struct ScriptContext *ctx)
 {
     (void)ScriptReadWord(ctx);
-    ctx->mode = SCRIPT_MODE_STOPPED;
+    StopScript(ctx);
     return TRUE;
 }
 
@@ -107,7 +107,7 @@ bool8 ScrCmd_vgoto_if(struct ScriptContext *ctx)
 {
     (void)ScriptReadByte(ctx);
     (void)ScriptReadWord(ctx);
-    ctx->mode = SCRIPT_MODE_STOPPED;
+    StopScript(ctx);
     return TRUE;
 }
 
@@ -115,7 +115,7 @@ bool8 ScrCmd_vcall_if(struct ScriptContext *ctx)
 {
     (void)ScriptReadByte(ctx);
     (void)ScriptReadWord(ctx);
-    ctx->mode = SCRIPT_MODE_STOPPED;
+    StopScript(ctx);
     return TRUE;
 }
 
