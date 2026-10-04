@@ -153,7 +153,8 @@ for src in random.c event_data.c load_save.c save.c play_time.c \
     # Inject only the exact upstream public declaration; implementation remains src/bike.c.
     EXTRA=(-include "$ROOT/core/android_bike_contract.h" -Wno-implicit-function-declaration)
   fi
-  echo "  clang extras: ${EXTRA[*]:-(none)}"\n  "$CLANG" "${COMMON[@]}" "${EXTRA[@]}" -c "$CORE/src/$src" -o "$OUT/${src%.c}.o"
+  echo "  clang extras: ${EXTRA[*]:-(none)}"
+  "$CLANG" "${COMMON[@]}" "${EXTRA[@]}" -c "$CORE/src/$src" -o "$OUT/${src%.c}.o"
 done
 
 for src in malloc.c sprite.c dma3_manager.c string_util.c bg.c gpu_regs.c blit.c text.c window.c; do
