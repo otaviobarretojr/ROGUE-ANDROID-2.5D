@@ -3,7 +3,7 @@ import pathlib
 import re
 import sys
 
-CONTROL = {"l": 0xFA, "p": 0xFB, "n": 0xFE}
+CONTROL = {"l": [0xFA], "p": [0xFB], "n": [0xFE], "v": [0xFD]}
 STRING = re.compile(r'^(\s*)\.string\s+"(.*)"\s*$')
 
 def convert(line):
@@ -17,7 +17,7 @@ def convert(line):
         if not part:
             continue
         if len(part) == 2 and part[0] == "\\" and part[1] in CONTROL:
-            out.append(f"{indent}.byte 0x{CONTROL[part[1]]:02X}")
+            out.append(f"{indent}.byte " + ",".join(f"0x{b:02X}" for b in CONTROL[part[1]]))
         else:
             out.append(f'{indent}.string "{part}"')
     return out
