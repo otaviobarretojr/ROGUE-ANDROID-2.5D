@@ -43,6 +43,7 @@ jobs:
             build/core-probe/unresolved-stage1.txt
             build/core-probe/critical-stage2.txt
             build/core-probe/hub_script_pointer_manifest.txt
+            build/core-probe/hub_foreach_residuals.txt
             build/core-probe/unresolved-providers.txt
             build/core-probe/provider-summary.txt
           if-no-files-found: warn
