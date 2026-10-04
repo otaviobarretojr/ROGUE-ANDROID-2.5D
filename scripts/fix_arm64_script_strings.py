@@ -5,17 +5,33 @@ import sys
 
 CONTROL = {"l": [0xFA], "p": [0xFB], "n": [0xFE], "v": [0xFD]}
 STRING = re.compile(r'^(\s*)\.string\s+"(.*)"\s*$')
+CONSTANTS = {
+    "STR_VAR_1": "0", "STR_VAR_2": "1", "STR_VAR_3": "2",
+    "NO": "0", "YES": "1",
+    "VARS_START": "0x4000", "VARS_END": "0x40FF",
+    "SPECIAL_VARS_START": "0x8000", "SPECIAL_VARS_END": "0x8015",
+    "VAR_0x8003": "0x8003", "VAR_0x8004": "0x8004", "VAR_0x8005": "0x8005",
+    "VAR_RESULT": "0x800D", "VAR_ITEM_ID": "0x800E",
+    "PARTY_NOTHING_CHOSEN": "0xFF", "MULTI_B_PRESSED": "127",
+}
 
 def convert(line):
-    # Clang IAS accepts a single colon; the GBA sources commonly export labels with ::.
     line = re.sub(r"^([A-Za-z_][A-Za-z0-9_.$]*)::", lambda m: m.group(1) + ":", line)
-    # These constants are consumed by assembler macros after CPP has already run.
-    constants = {"STR_VAR_1":"0","STR_VAR_2":"1","STR_VAR_3":"2","NO":"0","YES":"1","VARS_START":"0x4000","VARS_END":"0x40FF","SPECIAL_VARS_START":"0x8000","SPECIAL_VARS_END":"0x8015","VAR_0x8003":"0x8003","VAR_0x8004":"0x8004","VAR_0x8005":"0x8005","VAR_RESULT":"0x800D","VAR_ITEM_ID":"0x800E","PARTY_NOTHING_CHOSEN":"0xFF","MULTI_B_PRESSED":"127"}
-    for name, value in constants.items():
-        line = re.sub(r"(?<![A-Za-z0-9_])" + re.escape(name) + r"(?![A-Za-z0-9_])", value, line)
-    if re.match(r"^\\s*FOREACH_(?:TM|HM)\\(", line):\n        return []\n    m = STRING.match(line)
+
+    # TM/HM foreach directives are compatibility alias generators, not Hub bytecode.
+    if re.match(r"^\s*FOREACH_(?:TM|HM)(?:\s|\()", line):
+        return []
+
+    # Preserve assembler definitions such as YES = 1.
+    is_definition = re.match(r"^\s*[A-Za-z_][A-Za-z0-9_]*\s*=", line) is not None
+    if not is_definition:
+        for name, value in CONSTANTS.items():
+            line = re.sub(r"(?<![A-Za-z0-9_])" + re.escape(name) + r"(?![A-Za-z0-9_])", value, line)
+
+    m = STRING.match(line)
     if not m:
         return [line]
+
     indent, body = m.groups()
     parts = re.split(r'(\\[lpnv])', body)
     out = []
