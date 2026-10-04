@@ -142,7 +142,9 @@ for src in random.c event_data.c load_save.c save.c play_time.c \
   field_camera.c bike.c decompress.c metatile_behavior.c palette.c field_door.c field_screen_effect.c field_message_box.c trainer_see.c rogue_hub.c; do
   echo "Probing src/$src"
   EXTRA=()
-  if [[ "$src" == "event_object_movement.c" ]]; then
+  if [[ "$src" == "overworld.c" ]]; then
+    EXTRA=(-include "$ROOT/core/android_overworld_contract.h" -Wno-implicit-function-declaration)
+  elif [[ "$src" == "event_object_movement.c" ]]; then
     EXTRA=(-DMODERN=1)
   elif [[ "$src" == "field_player_avatar.c" ]]; then
     EXTRA=(-include "$ROOT/core/android_player_avatar_contract.h")
