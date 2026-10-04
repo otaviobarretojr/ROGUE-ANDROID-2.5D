@@ -19,7 +19,7 @@ def convert(line):
     line = re.sub(r"^([A-Za-z_][A-Za-z0-9_.$]*)::", lambda m: m.group(1) + ":", line)
 
     # TM/HM foreach directives are compatibility alias generators, not Hub bytecode.
-    if re.match(r"^\s*FOREACH_(?:TM|HM)(?:\s|\()", line):
+    if re.match(r"^\s*(?:FOREACH_(?:TM|HM)|\.macro\s+FOREACH_(?:TM|HM))\b", line):
         return []
 
     # Preserve assembler definitions such as YES = 1.
