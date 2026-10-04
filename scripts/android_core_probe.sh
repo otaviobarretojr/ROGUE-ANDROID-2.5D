@@ -144,6 +144,8 @@ for src in random.c event_data.c load_save.c save.c play_time.c \
   EXTRA=()
   if [[ "$src" == "event_object_movement.c" ]]; then
     EXTRA=(-DMODERN=1)
+  elif [[ "$src" == "field_player_avatar.c" ]]; then
+    EXTRA=(-include "$CORE/include/global.fieldmap.h")
   elif [[ "$src" == "field_control_avatar.c" ]]; then
     # Frozen upstream source calls GetPlayerSpeed but Clang still loses the prototype in this probe configuration.
     # Inject only the exact upstream public declaration; implementation remains src/bike.c.
