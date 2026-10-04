@@ -144,6 +144,9 @@ for src in random.c event_data.c load_save.c save.c play_time.c \
   EXTRA=()
   if [[ "$src" == "event_object_movement.c" ]]; then
     EXTRA=(-DMODERN=1)
+  elif [[ "$src" == "field_control_avatar.c" ]]; then
+    # Frozen upstream declares this in bike.h; force the public contract into this TU for Clang probe parity.
+    EXTRA=(-include "$CORE/include/bike.h")
   fi
   "$CLANG" "${COMMON[@]}" "${EXTRA[@]}" -c "$CORE/src/$src" -o "$OUT/${src%.c}.o"
 done
