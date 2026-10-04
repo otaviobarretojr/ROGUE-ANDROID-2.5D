@@ -116,8 +116,9 @@ python3 "$ROOT/scripts/generate_stage2_hub_script_asm.py" --core "$CORE" --out "
 (
   cd "$CORE"
   "$CLANG" -E -P -x assembler-with-cpp -I include -I gflib "$OUT/hub_scripts.S" \
-    | python3 tools/pc/asmfilter.py - > "$OUT/hub_scripts.filtered.s"
+    | python3 tools/pc/asmfilter.py - > "$OUT/hub_scripts.filtered.raw.s"
 )
+python3 "$ROOT/scripts/fix_arm64_script_strings.py" "$OUT/hub_scripts.filtered.raw.s" "$OUT/hub_scripts.filtered.s"
 "$CLANG" -c -x assembler "$OUT/hub_scripts.filtered.s" -o "$OUT/hub_scripts.o"
 python3 "$ROOT/scripts/tokenize_arm64_script_object.py" \
   --object "$OUT/hub_scripts.o" \
