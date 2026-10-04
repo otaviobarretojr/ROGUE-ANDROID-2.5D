@@ -69,7 +69,7 @@ mkdir -p "$OUT"
 COMMON=(
   -std=gnu17 -O1 -funsigned-char -fno-strict-aliasing -fwrapv -fcommon
   -DPORTABLE=1 -DROGUE_EXPANSION=1 -DROGUE_BAKING=1
-  -I"$CORE/include" -iquote "$CORE/gflib" -I"$CORE/tools/agbcc/include" -I"$ROOT/core"
+  -I"$CORE/include" -I"$CORE/tools/agbcc/include" -I"$ROOT/core"
   -Wno-incompatible-pointer-types -Wno-int-conversion
   -Wno-pointer-to-int-cast -Wno-int-to-pointer-cast
   -include alloca.h
