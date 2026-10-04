@@ -72,6 +72,15 @@ def main():
         '',
         '\t.section script_data, "aw", %progbits',
         '\t.p2align 2',
+        '',
+        '#ifndef STR_VAR_1',
+        '#define STR_VAR_1 0',
+        '#define STR_VAR_2 1',
+        '#define STR_VAR_3 2',
+        '#endif',
+        '#ifndef YES',
+        '#define YES 1',
+        '#endif',
         ''
     ]
     for label in labels:
