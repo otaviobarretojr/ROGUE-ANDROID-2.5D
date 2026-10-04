@@ -11,7 +11,7 @@ def convert(line):
     if not m:
         return [line]
     indent, body = m.groups()
-    parts = re.split(r'(\\[lpn])', body)
+    parts = re.split(r'(\\[lpnv])', body)
     out = []
     for part in parts:
         if not part:
