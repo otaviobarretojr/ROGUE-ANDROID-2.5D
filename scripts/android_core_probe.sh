@@ -69,7 +69,7 @@ mkdir -p "$OUT"
 COMMON=(
   -std=gnu17 -O1 -funsigned-char -fno-strict-aliasing -fwrapv -fcommon
   -DPORTABLE=1 -DROGUE_EXPANSION=1 -DROGUE_BAKING=1
-  -I"$CORE/include" -I"$CORE/tools/agbcc/include" -I"$ROOT/core"
+  -I"$CORE/include" -I"$CORE/gflib" -I"$CORE/tools/agbcc/include" -I"$ROOT/core"
   -Wno-incompatible-pointer-types -Wno-int-conversion
   -Wno-pointer-to-int-cast -Wno-int-to-pointer-cast
   -include alloca.h
@@ -95,8 +95,9 @@ COMMON=(
 "$CLANG" "${COMMON[@]}" -c "$ROOT/core/android_stage2_rogue_save.c" -o "$OUT/android_stage2_rogue_save.o"
 "$CLANG" "${COMMON[@]}" -c "$ROOT/core/android_stage2_menu_infra.c" -o "$OUT/android_stage2_menu_infra.o"
 "$CLANG" "${COMMON[@]}" -c "$ROOT/core/android_stage2_special_vars.c" -o "$OUT/android_stage2_special_vars.o"
-"$CLANG" "${COMMON[@]}" -DROM_ASSETS=1 -c "$CORE/src/platform/rom_assets.c" -o "$OUT/platform_rom_assets.o"
-"$CLANG" "${COMMON[@]}" -DROM_ASSETS=1 -c "$CORE/src/platform/rom_assets_table.c" -o "$OUT/platform_rom_assets_table.o"
+ROM_COMMON=("${COMMON[@]/-I$CORE\/gflib/}")
+"$CLANG" "${ROM_COMMON[@]}" -DROM_ASSETS=1 -c "$CORE/src/platform/rom_assets.c" -o "$OUT/platform_rom_assets.o"
+"$CLANG" "${ROM_COMMON[@]}" -DROM_ASSETS=1 -c "$CORE/src/platform/rom_assets_table.c" -o "$OUT/platform_rom_assets_table.o"
 echo "ROM_ASSETS loader/table ABI compiled; asset markers are produced by the final ROM_ASSETS preprocessing/link pipeline."
 "$CLANG" "${COMMON[@]}" -c "$CORE/src/platform/dma.c" -o "$OUT/platform_dma.o"
 echo "== Generate native-pointer Rogue Hub data =="
