@@ -85,7 +85,7 @@ def main():
     replacement=r'''bool8 ScrCmd_setvaddress(struct ScriptContext *ctx)
 {
     (void)ScriptReadWord(ctx);
-    ctx->mode = SCRIPT_MODE_STOPPED;
+    StopScript(ctx);
     return TRUE;
 }
 
