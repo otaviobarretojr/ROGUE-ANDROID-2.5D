@@ -47,7 +47,15 @@ def convert(line):
 def main():
     src, dst = map(pathlib.Path, sys.argv[1:3])
     out = []
+    skipping_foreach_macro = False
     for line in src.read_text(encoding="utf-8", errors="surrogateescape").splitlines():
+        if skipping_foreach_macro:
+            if re.match(r"^\\s*\\.endm\\b", line):
+                skipping_foreach_macro = False
+            continue
+        if re.match(r"^\\s*\\.macro\\s+FOREACH_(?:TM|HM)\\b", line):
+            skipping_foreach_macro = True
+            continue
         out.extend(convert(line))
     dst.write_text("\n".join(out) + "\n", encoding="utf-8", errors="surrogateescape")
 
