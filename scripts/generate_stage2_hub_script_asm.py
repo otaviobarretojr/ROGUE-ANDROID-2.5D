@@ -78,7 +78,6 @@ def main():
         '',
         '\t.include "asm/macros.inc"',
         '\t.include "asm/macros/event.inc"',
-        '\t.include "constants/constants.inc"',
         '',
         '\t.section script_data, "aw", %progbits',
         '\t.p2align 2',
