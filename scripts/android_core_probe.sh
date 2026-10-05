@@ -116,6 +116,7 @@ python3 "$ROOT/scripts/generate_stage2_hub_script_asm.py" --core "$CORE" --out "
 (
   cd "$CORE"
   "$CLANG" -E -P -x assembler-with-cpp -I include -I gflib "$OUT/hub_scripts.S" \
+    | sed -E '/^[[:space:]]*FOREACH_(TM|HM)\(/d' \
     | python3 tools/pc/asmfilter.py - > "$OUT/hub_scripts.filtered.raw.s"
 )
 python3 "$ROOT/scripts/fix_arm64_script_strings.py" "$OUT/hub_scripts.filtered.raw.s" "$OUT/hub_scripts.filtered.s"
