@@ -160,6 +160,10 @@ for src in random.c event_data.c load_save.c save.c play_time.c \
     # Frozen upstream source calls GetPlayerSpeed but Clang still loses the prototype in this probe configuration.
     # Inject only the exact upstream public declaration; implementation remains src/bike.c.
     EXTRA=(-include "$ROOT/core/android_bike_contract.h" -Wno-implicit-function-declaration)
+  elif [[ "$src" == "rogue_hub.c" ]]; then
+    # Generated decoration data uses ARRAY_COUNT before this translation unit exposes the helper macro.
+    # Keep generated/upstream sources untouched and provide the compile-time helper only for the Android probe.
+    EXTRA=(-D'ARRAY_COUNT(array)=(sizeof(array)/sizeof((array)[0]))')
   fi
   echo "  clang extras: ${EXTRA[*]:-(none)}"
   "$CLANG" "${COMMON[@]}" "${EXTRA[@]}" -c "$CORE/src/$src" -o "$OUT/${src%.c}.o"
