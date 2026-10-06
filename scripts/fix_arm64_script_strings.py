@@ -61,7 +61,7 @@ def main():
             if re.match(r"^\\s*\\.endm\\b", line):
                 skipping_foreach_macro = False
             continue
-        if re.search(r"\\.macro\\s+FOREACH_(?:TM|HM)\\b", line):
+        if re.search(r"(?:\\.macro\\s+)?FOREACH_(?:TM|HM)(?:\\b|\\()", line):
             skipping_foreach_macro = True
             continue
         out.extend(convert(line))
