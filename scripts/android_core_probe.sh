@@ -161,9 +161,9 @@ for src in random.c event_data.c load_save.c save.c play_time.c \
     # Inject only the exact upstream public declaration; implementation remains src/bike.c.
     EXTRA=(-include "$ROOT/core/android_bike_contract.h" -Wno-implicit-function-declaration)
   elif [[ "$src" == "rogue_hub.c" ]]; then
-    # Generated decoration data uses ARRAY_COUNT before this translation unit exposes the helper macro.
-    # Keep generated/upstream sources untouched and provide the compile-time helper only for the Android probe.
-    EXTRA=(-D'ARRAY_COUNT(array)=(sizeof(array)/sizeof((array)[0]))')
+    # rogue.h intentionally hides runtime Hub table externs while ROGUE_BAKING is enabled.
+    # This translation unit consumes those runtime tables, so compile it in normal runtime mode.
+    EXTRA=(-UROGUE_BAKING)
   fi
   echo "  clang extras: ${EXTRA[*]:-(none)}"
   "$CLANG" "${COMMON[@]}" "${EXTRA[@]}" -c "$CORE/src/$src" -o "$OUT/${src%.c}.o"
