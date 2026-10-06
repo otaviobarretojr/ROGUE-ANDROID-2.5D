@@ -33,6 +33,11 @@ test -s "$CORE/include/constants/generated/quests.h"
   "$CORE/include/constants/generated/decorations.h"
 test -s "$CORE/include/constants/generated/decorations.h"
 "$CORE/tools/Pokabbie/Build/CustomJson/customjson" \
+  decoration_c \
+  "$CORE/src/data/rogue/decorations.json" \
+  "$CORE/src/data/rogue/decorations.h"
+test -s "$CORE/src/data/rogue/decorations.h"
+"$CORE/tools/Pokabbie/Build/CustomJson/customjson" \
   custom_mons_h \
   "$CORE/src/data/rogue/custom_mons.json" \
   "$CORE/include/constants/generated/custom_mons.h"
