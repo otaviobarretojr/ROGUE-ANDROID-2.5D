@@ -1,6 +1,8 @@
 #ifndef ROGUE25D_ANDROID_ROGUE_HUB_TABLES_CONTRACT_H
 #define ROGUE25D_ANDROID_ROGUE_HUB_TABLES_CONTRACT_H
 
+#include "constants/rogue_hub.h"
+
 /*
  * Minimal runtime Hub ABI copied from frozen upstream include/rogue.h.
  * ROGUE_BAKING hides both these layouts and their table declarations, while
