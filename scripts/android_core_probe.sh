@@ -162,16 +162,16 @@ for src in random.c event_data.c load_save.c save.c play_time.c \
     EXTRA=(-include "$ROOT/core/android_bike_contract.h" -Wno-implicit-function-declaration)
   elif [[ "$src" == "rogue_hub.c" ]]; then
     # ROGUE_BAKING hides the runtime Hub table externs from rogue.h. The declarations require
-    # RogueHubArea/RogueAreaUpgrade to already be defined, so append the contract after the
-    # translation unit includes instead of forcing it before global.h.
+    # RogueHubArea/RogueAreaUpgrade to already be defined, so inject the contract immediately
+    # after global.h instead of forcing it before the upstream type definitions.
     HUB_PROBE_SRC="$OUT/rogue_hub_probe.c"
     awk -v contract="$ROOT/core/android_rogue_hub_tables_contract.h" '
       { print }
-      $0 == "#include \"rogue_hub.h\"" {
+      $0 == "#include \"global.h\"" {
         printf "#include \"%s\"\\n", contract
       }
     ' "$CORE/src/rogue_hub.c" > "$HUB_PROBE_SRC"
-    echo "  clang extras: (Hub contract inserted after rogue_hub.h)"
+    echo "  clang extras: (Hub contract inserted after global.h)"
     "$CLANG" "${COMMON[@]}" -c "$HUB_PROBE_SRC" -o "$OUT/rogue_hub.o"
     continue
   fi
