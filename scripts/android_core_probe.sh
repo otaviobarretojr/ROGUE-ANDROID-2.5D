@@ -161,9 +161,15 @@ for src in random.c event_data.c load_save.c save.c play_time.c \
     # Inject only the exact upstream public declaration; implementation remains src/bike.c.
     EXTRA=(-include "$ROOT/core/android_bike_contract.h" -Wno-implicit-function-declaration)
   elif [[ "$src" == "rogue_hub.c" ]]; then
-    # ROGUE_BAKING keeps the portable probe dependency surface small, but rogue.h hides two
-    # runtime Hub table declarations in that mode. Re-expose only that frozen-upstream contract.
-    EXTRA=(-include "$ROOT/core/android_rogue_hub_tables_contract.h")
+    # ROGUE_BAKING hides the runtime Hub table externs from rogue.h. The declarations require
+    # RogueHubArea/RogueAreaUpgrade to already be defined, so append the contract after the
+    # translation unit includes instead of forcing it before global.h.
+    HUB_PROBE_SRC="$OUT/rogue_hub_probe.c"
+    cat "$CORE/src/rogue_hub.c" > "$HUB_PROBE_SRC"
+    printf '\n#include "%s"\n' "$ROOT/core/android_rogue_hub_tables_contract.h" >> "$HUB_PROBE_SRC"
+    echo "  clang extras: (Hub contract appended after upstream includes)"
+    "$CLANG" "${COMMON[@]}" -c "$HUB_PROBE_SRC" -o "$OUT/rogue_hub.o"
+    continue
   fi
   echo "  clang extras: ${EXTRA[*]:-(none)}"
   "$CLANG" "${COMMON[@]}" "${EXTRA[@]}" -c "$CORE/src/$src" -o "$OUT/${src%.c}.o"
