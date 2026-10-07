@@ -168,7 +168,7 @@ for src in random.c event_data.c load_save.c save.c play_time.c \
     awk -v contract="$ROOT/core/android_rogue_hub_tables_contract.h" '
       { print }
       $0 == "#include \"global.h\"" {
-        printf "#include \"%s\"\\n", contract
+        print "#include \"" contract "\""
       }
     ' "$CORE/src/rogue_hub.c" > "$HUB_PROBE_SRC"
     echo "  clang extras: (Hub contract inserted after global.h)"
