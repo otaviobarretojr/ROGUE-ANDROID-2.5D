@@ -1,6 +1,15 @@
 package com.otaviobarreto.rogue25d
 class NativeRuntime {
- companion object { init { System.loadLibrary("rogue25d") } }
+ companion object {
+  @Volatile private var loaded=false
+  @Synchronized fun load():Result<Unit> {
+   if(loaded) return Result.success(Unit)
+   return runCatching {
+    System.loadLibrary("rogue25d")
+    loaded=true
+   }
+  }
+ }
  external fun nativeStart()
  external fun nativeStop()
  external fun nativeStep(dt: Double)
