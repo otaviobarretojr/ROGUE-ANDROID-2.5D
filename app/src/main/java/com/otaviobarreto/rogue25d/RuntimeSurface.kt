@@ -12,25 +12,39 @@ class RuntimeSurface(context: Context): View(context), Choreographer.FrameCallba
  private val paint=Paint(Paint.ANTI_ALIAS_FLAG)
  private var lastFrameNanos=0L
  private var buttons=0
+ private var nativeReady=false
+ private var startupError:String?=null
  init {
   setBackgroundColor(Color.rgb(18,34,28))
-  runtime.nativeSetStoragePath(context.filesDir.absolutePath)
  }
  override fun onAttachedToWindow(){
   super.onAttachedToWindow()
   lastFrameNanos=0L
-  runtime.nativeStart()
-  Choreographer.getInstance().postFrameCallback(this)
+  try {
+   runtime.nativeSetStoragePath(context.filesDir.absolutePath)
+   runtime.nativeStart()
+   nativeReady=true
+   startupError=null
+   Choreographer.getInstance().postFrameCallback(this)
+  } catch(t:Throwable) {
+   nativeReady=false
+   startupError=t.javaClass.simpleName+": "+(t.message ?: "native startup failed")
+   invalidate()
+  }
  }
  override fun onDetachedFromWindow(){
   Choreographer.getInstance().removeFrameCallback(this)
   lastFrameNanos=0L
   buttons=0
-  runtime.nativeSetButtons(0)
-  runtime.nativeStop()
+  if(nativeReady) {
+   runtime.nativeSetButtons(0)
+   runtime.nativeStop()
+  }
+  nativeReady=false
   super.onDetachedFromWindow()
  }
  override fun doFrame(t:Long){
+  if(!nativeReady) return
   if(lastFrameNanos!=0L) runtime.nativeStep((t-lastFrameNanos)/1_000_000_000.0)
   lastFrameNanos=t; invalidate(); Choreographer.getInstance().postFrameCallback(this)
  }
@@ -50,7 +64,7 @@ class RuntimeSurface(context: Context): View(context), Choreographer.FrameCallba
     else -> 0
    }
   }
-  runtime.nativeSetButtons(buttons)
+  if(nativeReady) runtime.nativeSetButtons(buttons)
   return true
  }
  override fun onDraw(c:Canvas){
@@ -58,8 +72,16 @@ class RuntimeSurface(context: Context): View(context), Choreographer.FrameCallba
   paint.color=Color.WHITE; paint.textSize=42f
   c.drawText("ROGUE 2.5D — Rogue Bridge",56f,72f,paint)
   paint.textSize=28f
-  c.drawText("Native tick: "+runtime.nativeTick(),56f,118f,paint)
-  c.drawText("Input mask: "+runtime.nativeButtons(),56f,158f,paint)
+  val error=startupError
+  if(error != null) {
+   c.drawText("Native startup error:",56f,118f,paint)
+   c.drawText(error.take(80),56f,158f,paint)
+  } else if(nativeReady) {
+   c.drawText("Native tick: "+runtime.nativeTick(),56f,118f,paint)
+   c.drawText("Input mask: "+runtime.nativeButtons(),56f,158f,paint)
+  } else {
+   c.drawText("Native runtime not started",56f,118f,paint)
+  }
   paint.style=Paint.Style.STROKE; paint.strokeWidth=4f
   c.drawCircle(width*.18f,height*.72f,120f,paint)
   c.drawCircle(width*.82f,height*.70f,72f,paint)
