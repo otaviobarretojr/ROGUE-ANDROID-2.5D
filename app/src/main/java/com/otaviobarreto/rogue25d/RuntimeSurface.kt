@@ -8,7 +8,7 @@ import android.view.MotionEvent
 import android.view.View
 
 class RuntimeSurface(context: Context): View(context), Choreographer.FrameCallback {
- private val runtime=NativeRuntime()
+ private var runtime:NativeRuntime?=null
  private val paint=Paint(Paint.ANTI_ALIAS_FLAG)
  private var lastFrameNanos=0L
  private var buttons=0
@@ -21,8 +21,11 @@ class RuntimeSurface(context: Context): View(context), Choreographer.FrameCallba
   super.onAttachedToWindow()
   lastFrameNanos=0L
   try {
-   runtime.nativeSetStoragePath(context.filesDir.absolutePath)
-   runtime.nativeStart()
+   NativeRuntime.load().getOrThrow()
+   val activeRuntime=NativeRuntime()
+   runtime=activeRuntime
+   activeRuntime.nativeSetStoragePath(context.filesDir.absolutePath)
+   activeRuntime.nativeStart()
    nativeReady=true
    startupError=null
    Choreographer.getInstance().postFrameCallback(this)
@@ -37,15 +40,15 @@ class RuntimeSurface(context: Context): View(context), Choreographer.FrameCallba
   lastFrameNanos=0L
   buttons=0
   if(nativeReady) {
-   runtime.nativeSetButtons(0)
-   runtime.nativeStop()
+   runtime?.nativeSetButtons(0)
+   runtime?.nativeStop()
   }
   nativeReady=false
   super.onDetachedFromWindow()
  }
  override fun doFrame(t:Long){
   if(!nativeReady) return
-  if(lastFrameNanos!=0L) runtime.nativeStep((t-lastFrameNanos)/1_000_000_000.0)
+  if(lastFrameNanos!=0L) runtime?.nativeStep((t-lastFrameNanos)/1_000_000_000.0)
   lastFrameNanos=t; invalidate(); Choreographer.getInstance().postFrameCallback(this)
  }
  override fun onTouchEvent(e:MotionEvent):Boolean {
@@ -64,7 +67,7 @@ class RuntimeSurface(context: Context): View(context), Choreographer.FrameCallba
     else -> 0
    }
   }
-  if(nativeReady) runtime.nativeSetButtons(buttons)
+  if(nativeReady) runtime?.nativeSetButtons(buttons)
   return true
  }
  override fun onDraw(c:Canvas){
@@ -77,8 +80,8 @@ class RuntimeSurface(context: Context): View(context), Choreographer.FrameCallba
    c.drawText("Native startup error:",56f,118f,paint)
    c.drawText(error.take(80),56f,158f,paint)
   } else if(nativeReady) {
-   c.drawText("Native tick: "+runtime.nativeTick(),56f,118f,paint)
-   c.drawText("Input mask: "+runtime.nativeButtons(),56f,158f,paint)
+   c.drawText("Native tick: "+(runtime?.nativeTick() ?: -1),56f,118f,paint)
+   c.drawText("Input mask: "+(runtime?.nativeButtons() ?: 0),56f,158f,paint)
   } else {
    c.drawText("Native runtime not started",56f,118f,paint)
   }
