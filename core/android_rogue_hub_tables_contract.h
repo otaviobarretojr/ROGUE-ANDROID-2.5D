@@ -1,6 +1,8 @@
 #ifndef ROGUE25D_ANDROID_ROGUE_HUB_TABLES_CONTRACT_H
 #define ROGUE25D_ANDROID_ROGUE_HUB_TABLES_CONTRACT_H
 
+#include "constants/event_objects.h"
+
 /*
  * Frozen upstream rogue.h defines the Hub layouts under this probe, but hides
  * these runtime table declarations when ROGUE_BAKING is enabled.
