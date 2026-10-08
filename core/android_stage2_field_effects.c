@@ -78,12 +78,6 @@ u8 FindTallGrassFieldEffectSpriteId(
     return MAX_SPRITES;
 }
 
-u32 StartFieldEffectForObjectEvent(u8 id, struct ObjectEvent *objectEvent)
-{
-    (void)objectEvent;
-    return FieldEffectStart(id);
-}
-
 void StartAshFieldEffect(s16 x, s16 y, u16 metatileId, s16 priority)
 {
     (void)x;
