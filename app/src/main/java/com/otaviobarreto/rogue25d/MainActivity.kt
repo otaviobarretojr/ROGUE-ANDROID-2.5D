@@ -25,11 +25,7 @@ class MainActivity : Activity() {
         super.onCreate(savedInstanceState)
         enterImmersiveMode()
 
-        if (isInstalledRomValid()) {
-            launchRuntime()
-        } else {
-            showRomImportScreen()
-        }
+        showIsolationScreen()
     }
 
     private fun enterImmersiveMode() {
@@ -42,6 +38,47 @@ class MainActivity : Activity() {
     private fun launchRuntime() {
         setContentView(RuntimeSurface(this))
     }
+
+    private fun showIsolationScreen() {
+        val romValid = isInstalledRomValid()
+        val root = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            gravity = Gravity.CENTER
+            setPadding(72, 72, 72, 72)
+            setBackgroundColor(Color.rgb(18, 34, 28))
+        }
+        val title = TextView(this).apply {
+            text = "ROGUE 2.5D — Android Safe Start"
+            textSize = 30f
+            setTextColor(Color.WHITE)
+            gravity = Gravity.CENTER
+        }
+        val status = TextView(this).apply {
+            text = if (romValid)
+                "Android/Kotlin iniciou corretamente. ROM EX v2.2.1 encontrada."
+            else
+                "Android/Kotlin iniciou corretamente. ROM ainda não instalada."
+            textSize = 18f
+            setTextColor(Color.WHITE)
+            gravity = Gravity.CENTER
+            setPadding(0, 28, 0, 32)
+        }
+        val nativeTest = Button(this).apply {
+            text = "Testar runtime nativo"
+            isEnabled = romValid
+            setOnClickListener { launchRuntime() }
+        }
+        val romButton = Button(this).apply {
+            text = if (romValid) "Selecionar outra ROM" else "Selecionar ROM .gba"
+            setOnClickListener { requestRom() }
+        }
+        root.addView(title)
+        root.addView(status)
+        root.addView(nativeTest)
+        root.addView(romButton)
+        setContentView(root)
+    }
+
 
     private fun showRomImportScreen() {
         val root = LinearLayout(this).apply {
@@ -139,7 +176,7 @@ class MainActivity : Activity() {
                 temp.delete()
             }
 
-            launchRuntime()
+            showIsolationScreen()
         } catch (t: Throwable) {
             temp.delete()
             Toast.makeText(this, "Falha ao importar ROM: ${t.message}", Toast.LENGTH_LONG).show()
