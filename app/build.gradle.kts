@@ -11,8 +11,8 @@ android {
         applicationId = "com.otaviobarreto.rogue25d"
         minSdk = 26
         targetSdk = 35
-        versionCode = 4
-        versionName = "0.2.1-safe-start"
+        versionCode = 5
+        versionName = "0.2.2-smoke"
         ndk {
             abiFilters += listOf("arm64-v8a")
         }
